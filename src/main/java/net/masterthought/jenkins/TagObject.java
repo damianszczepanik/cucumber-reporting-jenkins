@@ -107,5 +107,20 @@ public class TagObject {
     public String getRawStatus() {
         return getStatus().toString().toLowerCase();
     }
+
+	public String getRawI18NStatus() {
+
+		String rawI18NStatus;
+
+		switch (getStatus()) {
+			case PASSED:    rawI18NStatus = Messages.FeatureReportGenerator_Passed();  break;
+			case FAILED:    rawI18NStatus = Messages.FeatureReportGenerator_Failed();  break;
+			case UNDEFINED: rawI18NStatus = Messages.FeatureReportGenerator_Pending(); break;
+			case SKIPPED:   rawI18NStatus = Messages.FeatureReportGenerator_Skipped(); break;
+			default:        rawI18NStatus = Messages.FeatureReportGenerator_Failed();
+		}
+
+		return rawI18NStatus;
+	}
     
 }

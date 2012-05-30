@@ -12,7 +12,7 @@
         -->
     </script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Cucumber-JVM Html Reports - Tag Overview</title>
+    <title>$cucumber_jvm_html_reports - $tag_overview</title>
     <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css"
           media="screen"/>
     <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css"
@@ -129,8 +129,8 @@
 
         <div class="grid_6" id="nav">
             <ul>
-                <li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
-                <li><a href="feature-overview.html">Feature Overview</a></li>
+                <li><a href="${jenkins_base}job/$build_project/$build_number">$back_to_jenkins</a></li>
+                <li><a href="feature-overview.html">$feature_overview</a></li>
             </ul>
         </div>
     </div>
@@ -138,8 +138,8 @@
 <div id="fullwidth_gradient">
     <div class="container_12">
         <div class="grid_9 heading">
-            <h2>Tag Overview for Build: $build_number</h2>
-            <span class="subhead">The following graph shows number of steps passing, failing and skipped for this build:</span>
+            <h2>$tag_overview_for_build $build_number</h2>
+            <span class="subhead">$tag_overview_for_build_description</span>
         </div>
     </div>
 </div>
@@ -148,14 +148,14 @@
     <div class="grid_12">
 
         #if($tags.isEmpty())
-            <div><p>You have no tags in your cucumber features</p></div>
+            <div><p>$you_have_no_tags_in_your_cucumber_features</p></div>
         #else
 
         
         <div style="text-align:center;"><script language="JavaScript" type="text/javascript">
             <!--
             if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
-                alert("This page requires AC_RunActiveContent.js.");
+				alert("$this_page_requires_AC_RunActiveContent.");
             } else {
                 var hasRightVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
                 if(hasRightVersion) {
@@ -182,7 +182,7 @@
                             'devicefont', 'false'
                     );
                 } else {
-                    var alternateContent = 'This content requires the Adobe Flash Player. '
+					var alternateContent = '$this_content_requires_the_Adobe_Flash_Player. '
                             + '<u><a href=http://www.macromedia.com/go/getflash/>Get Flash</a></u>.';
                     document.write(alternateContent);
                 }
@@ -190,7 +190,7 @@
             // -->
         </script>
             <noscript>
-                <P>This content requires JavaScript.</P>
+				<P>$this_content_requires_javascript.</P>
             </noscript>
         </div>
         <br/>
@@ -200,18 +200,18 @@
         <div>
             <br/>
 
-            <h2>Tag Statistics</h2>
+            <h2>$tag_statistics</h2>
             <table class="stats-table">
                 <tr>
-                    <th>Tag</th>
-                    <th>Scenarios</th>
-                    <th>Steps</th>
-                    <th>Passed</th>
-                    <th>Failed</th>
-                    <th>Skipped</th>
-                    <th>Pending</th>
-                    <th>Duration</th>
-                    <th>Status</th>
+                    <th>$tag_label</th>
+                    <th>$scenarios</th>
+                    <th>$steps</th>
+                    <th>$passed</th>
+                    <th>$failed</th>
+                    <th>$skipped</th>
+                    <th>$pending</th>
+                    <th>$duration</th>
+                    <th>$status</th>
                 </tr>
 
 
@@ -233,7 +233,7 @@
                         <td>$tag.getNumberOfSkipped()</td>
                         <td>$tag.getNumberOfPending()</td>
                         <td>$tag.getDurationOfSteps()</td>
-                        <td style="background-color: $bgcolour;">$tag.getRawStatus()</td>
+                        <td style="background-color: $bgcolour;">$tag.getRawI18NStatus()</td>
                     </tr>
                 #end
 
@@ -246,7 +246,7 @@
                     <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_pending</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
-                    <td style="background-color:lightgray;font-weight:bold;">Totals</td>
+                    <td style="background-color:lightgray;font-weight:bold;">$totals</td>
                 </tr>
             </table>
         </div>

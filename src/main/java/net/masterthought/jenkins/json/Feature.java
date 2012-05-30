@@ -131,6 +131,21 @@ public class Feature {
         return getStatus().toString().toLowerCase();
     }
 
+	public String getRawI18NStatus() {
+
+		String rawI18NStatus;
+
+		switch (getStatus()) {
+			case PASSED:    rawI18NStatus = Messages.Feature_Passed();  break;
+			case FAILED:    rawI18NStatus = Messages.Feature_Failed();  break;
+			case UNDEFINED: rawI18NStatus = Messages.Feature_Pending(); break;
+			case SKIPPED:   rawI18NStatus = Messages.Feature_Skipped(); break;
+			default: 		rawI18NStatus = Messages.Feature_Failed();
+		}
+
+		return rawI18NStatus;
+	}
+
     public String getDurationOfSteps() {
         Long totalDuration = 0L;
         for (Element element : elements) {
