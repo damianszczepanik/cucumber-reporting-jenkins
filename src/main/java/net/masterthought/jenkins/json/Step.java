@@ -85,10 +85,12 @@ public class Step {
         if (getStatus() == Util.Status.FAILED) {
             String errorMessage = result.getErrorMessage();
             if (getInternalStatus() == Util.Status.SKIPPED) {
-                errorMessage = "Mode: Skipped causes Failure<br/><span class=\"skipped\">This step was skipped</span>";
+                errorMessage = Messages.Step_ModeSkippedCausesFailure() + 
+                               "<br/><span class=\"skipped\">" + Messages.Step_ThisStepWasSkipped() + "</span>";
             }
             if (getInternalStatus() == Util.Status.UNDEFINED) {
-                errorMessage = "Mode: Not Implemented causes Failure<br/><span class=\"undefined\">This step is not yet implemented</span>";
+                errorMessage = Messages.Step_ModeNotImplementedCausesFailure() +
+                               "<br/><span class=\"undefined\">" + Messages.Step_ThisStepIsNotYetImplemented() + "</span>";
             }
             content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + "<div class=\"step-error-message\"><pre>" + errorMessage + "</pre></div>" + Util.closeDiv();
         } else {
