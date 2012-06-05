@@ -5,6 +5,8 @@ import com.google.common.base.Splitter;
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.util.regexp.Regexp;
 import org.joda.time.DateTime;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +73,8 @@ public class Feature {
     }
 
     public String getName() {
-        return Util.itemExists(name) ? Util.result(getStatus()) + "<div class=\"feature-line\"><span class=\"feature-keyword\">Feature:</span> " + name + "</div>" + Util.closeDiv() : "";
+        return Util.itemExists(name) ? Util.result(getStatus()) + 
+        "<div class=\"feature-line\"><span class=\"feature-keyword\">" + Messages.Feature_Feature() + ":</span> " + name + "</div>" + Util.closeDiv() : "";
     }
 
     public String getRawName() {
@@ -81,9 +84,27 @@ public class Feature {
     public String getDescription() {
         String result = "";
         if (Util.itemExists(description)) {
-            String content = description.replaceFirst("As an", "<span class=\"feature-role\">As an</span>");
-            content = content.replaceFirst("I want to", "<span class=\"feature-action\">I want to</span>");
-            content = content.replaceFirst("So that", "<span class=\"feature-value\">So that</span>");
+			
+			String content = description;
+
+			Pattern pattern = Pattern.compile("(" + Messages.Feature_AsAn().trim() + ")");
+			Matcher matcher = pattern.matcher(content);
+			if (matcher.find()) {
+				content = matcher.replaceFirst("<span class=\"feature-role\">" + matcher.group(1) + "</span>");
+			}
+			
+			pattern = Pattern.compile("(" + Messages.Feature_IWantTo().trim() + ")");
+			matcher = pattern.matcher(content);
+			if (matcher.find()) {
+				content = matcher.replaceFirst("<span class=\"feature-action\">" + matcher.group(1) + "</span>");
+			}
+			
+			pattern = Pattern.compile("(" + Messages.Feature_SoThat().trim() + ")");
+			matcher = pattern.matcher(content);
+			if (matcher.find()) {
+				content = matcher.replaceFirst("<span class=\"feature-value\">" + matcher.group(1) + "</span>");
+			}
+			
             content = content.replaceAll("\n", "<br/>");
             result = "<div class=\"feature-description\">" + content + "</div>";
         }
