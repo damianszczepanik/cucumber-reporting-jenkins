@@ -18,7 +18,6 @@ public class Feature {
     private String description;
     private String keyword;
     private Element[] elements;
-	private Embedding[] embeddings;
     private Tag[] tags;
 
     public Feature(String name, String uri, String description, String keyword) {
@@ -31,10 +30,6 @@ public class Feature {
     public Element[] getElements() {
         return elements;
     }
-
-	public Embedding[] getEmbeddings() {
-		return embeddings;
-	}
 
     public boolean hasTags() {
         return Util.itemExists(tags);
@@ -186,5 +181,4 @@ public class Feature {
         DateTime dateTime = new DateTime();
         return dateTime.getYear() + "" + dateTime.getMonthOfYear() + "" + dateTime.getDayOfMonth() + "" + dateTime.getHourOfDay() + "" + dateTime.getMinuteOfHour() + "" + dateTime.getSecondOfMinute() + "" + dateTime.getMillis();
     }
-
 }
