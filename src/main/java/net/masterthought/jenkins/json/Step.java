@@ -101,7 +101,7 @@ public class Step {
             }
             content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + "<div class=\"step-error-message\"><pre>" + formatError(errorMessage) + "</pre></div>" + Util.closeDiv();
         } else if(getStatus() == Util.Status.MISSING){
-            String errorMessage = "<span class=\"missing\">Result was missing for this step</span>";
+            String errorMessage = "<span class=\"missing\">" + Messages.Step_ResultWasMissingForThisStep() + "</span>";
             content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + "<div class=\"step-error-message\"><pre>" + formatError(errorMessage) + "</pre></div>" + Util.closeDiv();
         } else {
             content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + Util.closeDiv();

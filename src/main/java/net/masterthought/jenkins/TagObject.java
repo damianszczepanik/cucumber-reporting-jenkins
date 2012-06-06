@@ -117,6 +117,7 @@ public class TagObject {
 			case FAILED:    rawI18NStatus = Messages.FeatureReportGenerator_Failed();  break;
 			case UNDEFINED: rawI18NStatus = Messages.FeatureReportGenerator_Pending(); break;
 			case SKIPPED:   rawI18NStatus = Messages.FeatureReportGenerator_Skipped(); break;
+			case MISSING:   rawI18NStatus = Messages.FeatureReportGenerator_Missing(); break;
 			default:        rawI18NStatus = Messages.FeatureReportGenerator_Failed();
 		}
 
