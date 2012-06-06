@@ -18,6 +18,7 @@ public class Feature {
     private String description;
     private String keyword;
     private Element[] elements;
+	private Embedding[] embeddings;
     private Tag[] tags;
 
     public Feature(String name, String uri, String description, String keyword) {
@@ -30,6 +31,10 @@ public class Feature {
     public Element[] getElements() {
         return elements;
     }
+
+	public Embedding[] getEmbeddings() {
+		return embeddings;
+	}
 
     public boolean hasTags() {
         return Util.itemExists(tags);
@@ -87,19 +92,19 @@ public class Feature {
 			
 			String content = description;
 
-			Pattern pattern = Pattern.compile("(" + Messages.Feature_AsAn().trim() + ")");
+			Pattern pattern = Pattern.compile("(" + Messages.Feature_AsAnRegexp().trim() + ")");
 			Matcher matcher = pattern.matcher(content);
 			if (matcher.find()) {
 				content = matcher.replaceFirst("<span class=\"feature-role\">" + matcher.group(1) + "</span>");
 			}
 			
-			pattern = Pattern.compile("(" + Messages.Feature_IWantTo().trim() + ")");
+			pattern = Pattern.compile("(" + Messages.Feature_IWantToRegexp().trim() + ")");
 			matcher = pattern.matcher(content);
 			if (matcher.find()) {
 				content = matcher.replaceFirst("<span class=\"feature-action\">" + matcher.group(1) + "</span>");
 			}
 			
-			pattern = Pattern.compile("(" + Messages.Feature_SoThat().trim() + ")");
+			pattern = Pattern.compile("(" + Messages.Feature_SoThatRegexp().trim() + ")");
 			matcher = pattern.matcher(content);
 			if (matcher.find()) {
 				content = matcher.replaceFirst("<span class=\"feature-value\">" + matcher.group(1) + "</span>");
@@ -183,6 +188,3 @@ public class Feature {
     }
 
 }
-
-
-
