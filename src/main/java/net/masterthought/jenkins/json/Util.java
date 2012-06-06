@@ -119,19 +119,19 @@ public class Util {
     public static String formatDuration(Long duration) {
         PeriodFormatter formatter = new PeriodFormatterBuilder()
                 .appendDays()
-                .appendSuffix(" day", " days")
-                .appendSeparator(" and ")
+                .appendSuffix(" "+ Messages.Util_Day(), " "+ Messages.Util_Days())
+                .appendSeparator(" " + Messages.Util_And() + " ")
                 .appendHours()
-                .appendSuffix(" hour", " hours")
-                .appendSeparator(" and ")
+                .appendSuffix(" "+ Messages.Util_Hour(), " "+ Messages.Util_Hours())
+                .appendSeparator(" " + Messages.Util_And() + " ")
                 .appendMinutes()
-                .appendSuffix(" min", " mins")
-                .appendSeparator(" and ")
+                .appendSuffix(" "+ Messages.Util_Min(), " "+ Messages.Util_Mins())
+                .appendSeparator(" " + Messages.Util_And() + " ")
                 .appendSeconds()
-                .appendSuffix(" sec", " secs")
-                .appendSeparator(" and ")
+                .appendSuffix(" "+ Messages.Util_Sec(), " "+ Messages.Util_Secs())
+                .appendSeparator(" " + Messages.Util_And() + " ")
                 .appendMillis()
-                .appendSuffix(" ms", " ms")
+                .appendSuffix(" "+ Messages.Util_Ms(), " "+ Messages.Util_Mss())
                 .toFormatter();
         return formatter.print(new Period(0, duration / 1000000));
 

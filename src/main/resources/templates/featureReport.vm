@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Cucumber-JVM Html Reports - Feature: $feature.getRawName() </title>
+	<title>$cucumber_jvm_html_reports - $feature_title: $feature.getRawName() </title>
 	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen" />
@@ -95,9 +95,9 @@ table.data-table td {
 			<h1 class="grid_4 logo"><a href="feature-overview.html" class='ie6fix'>Cucumber</a></h1>
 			<div class="grid_6" id="nav">
 				<ul>
-					<li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
-					<li><a href="tag-overview.html">Tag Overview</a></li>
-					<li><a href="feature-overview.html">Feature Overview</a></li>
+					<li><a href="${jenkins_base}job/$build_project/$build_number">$back_to_jenkins</a></li>
+					<li><a href="tag-overview.html">$tag_overview</a></li>
+					<li><a href="feature-overview.html">$feature_overview</a></li>
 				</ul>
 			</div>
 		</div>
@@ -105,7 +105,7 @@ table.data-table td {
 	<div id="fullwidth_gradient">
 		<div class="container_12">
 			<div class="grid_9 heading">
-				<h2>Feature Result for Build: $build_number</h2>
+				<h2>$feature_result_for_build $build_number</h2>
 			</div>
 		</div>
 	</div>
@@ -116,15 +116,15 @@ table.data-table td {
             <div>
                 <table class="stats-table">
                     <tr>
-                        <th>Feature</th>
-                        <th>Scenarios</th>
-                        <th>Steps</th>
-                        <th style="background-color:#C5D88A;">Passed</th>
-                        <th style="background-color:#D88A8A;">Failed</th>
-                        <th style="background-color:#2DEAEC;">Skipped</th>
-                        <th style="background-color:#ebcc81;">Pending</th>
-                        <th>Duration</th>
-                        <th>Status</th>
+                        <th>$feature_title</th>
+                        <th>$scenarios_title</th>
+                        <th>$steps</th>
+                        <th style="background-color:#C5D88A;">$passed</th>
+                        <th style="background-color:#D88A8A;">$failed</th>
+                        <th style="background-color:#2DEAEC;">$skipped</th>
+                        <th style="background-color:#ebcc81;">$pending</th>
+                        <th>$duration</th>
+                        <th>$status</th>
                     </tr>
 
                     <tr>
@@ -136,7 +136,7 @@ table.data-table td {
                         <td>$feature.getNumberOfSkipped()</td>
                         <td>$feature.getNumberOfPending()</td>
                         <td>$feature.getDurationOfSteps()</td>
-                        <td style="background-color: $report_status_colour;">$feature.getRawStatus()</td></tr>
+                        <td style="background-color: $report_status_colour;">$feature.getRawI18NStatus()</td></tr>
 
                 </table>
 
