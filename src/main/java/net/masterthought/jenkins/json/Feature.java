@@ -119,7 +119,9 @@ public class Feature {
             matches.add(modified);
         }
 
-        matches = matches.subList(1, matches.size());
+        List<String> sublist = matches.subList(1, matches.size());
+
+        matches = (sublist.size() == 0) ? matches : sublist;
         String fileName = Joiner.on("-").join(matches) + ".html";
         return fileName;
     }
@@ -140,7 +142,7 @@ public class Feature {
         return Util.findStatusCount(lookUpSteps(), Util.Status.FAILED);
     }
 
-    public int getNumberOfPending(){
+    public int getNumberOfPending() {
         return Util.findStatusCount(lookUpSteps(), Util.Status.UNDEFINED);
     }
 

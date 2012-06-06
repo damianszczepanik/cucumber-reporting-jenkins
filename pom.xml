@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
@@ -10,8 +9,14 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>0.0.10</version>
+    <version>0.0.12-SNAPSHOT</version>
     <packaging>hpi</packaging>
+
+    <scm>
+      <connection>scm:git:git://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</connection>
+      <developerConnection>scm:git:git@github.com:masterthought/jenkins-cucumber-jvm-reports-plugin-java.git</developerConnection>
+      <url>http://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java</url>
+    </scm>
 
     <!-- get every artifact through repo.jenkins-ci.org, which proxies all the artifacts that we need -->
     <repositories>
@@ -37,7 +42,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>1.7.1</version>
+            <version>2.2.1</version>
         </dependency>
         <dependency>
         	<groupId>maven</groupId>
