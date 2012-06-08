@@ -140,7 +140,7 @@
 <div id="fullwidth_gradient">
     <div class="container_12">
         <div class="grid_9 heading">
-            <h2>Tag Overview for Build: $build_number</h2>
+            <h2>Tag Overview#if ($build_number) for Build: $build_number#end</h2>
             <span class="subhead">The following graph shows number of steps passing, failing and skipped for this build:</span>
         </div>
     </div>
