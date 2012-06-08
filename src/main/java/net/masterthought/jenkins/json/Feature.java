@@ -1,13 +1,12 @@
 package net.masterthought.jenkins.json;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import org.apache.commons.lang.StringUtils;
-import org.apache.tools.ant.util.regexp.Regexp;
-import org.joda.time.DateTime;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 
 public class Feature {
 
@@ -141,11 +140,6 @@ public class Feature {
             }
         }
         return Util.formatDuration(totalDuration);
-    }
-
-    private String getTimestamp() {
-        DateTime dateTime = new DateTime();
-        return dateTime.getYear() + "" + dateTime.getMonthOfYear() + "" + dateTime.getDayOfMonth() + "" + dateTime.getHourOfDay() + "" + dateTime.getMinuteOfHour() + "" + dateTime.getSecondOfMinute() + "" + dateTime.getMillis();
     }
 
 }
