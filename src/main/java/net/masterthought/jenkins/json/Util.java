@@ -1,9 +1,5 @@
 package net.masterthought.jenkins.json;
 
-import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.time.DurationFormatUtils;
 
 public class Util {
 
@@ -117,24 +115,6 @@ public class Util {
     }
 
     public static String formatDuration(Long duration) {
-        PeriodFormatter formatter = new PeriodFormatterBuilder()
-                .appendDays()
-                .appendSuffix(" day", " days")
-                .appendSeparator(" and ")
-                .appendHours()
-                .appendSuffix(" hour", " hours")
-                .appendSeparator(" and ")
-                .appendMinutes()
-                .appendSuffix(" min", " mins")
-                .appendSeparator(" and ")
-                .appendSeconds()
-                .appendSuffix(" sec", " secs")
-                .appendSeparator(" and ")
-                .appendMillis()
-                .appendSuffix(" ms", " ms")
-                .toFormatter();
-        return formatter.print(new Period(0, duration / 1000000));
-
-
+       return DurationFormatUtils.formatDurationHMS(duration / 1000000);
     }
 }
