@@ -114,7 +114,7 @@ public class FeatureReportGenerator {
         context.put("total_fails", getTotalFails());
         context.put("total_skipped", getTotalSkipped());
         context.put("total_pending", getTotalPending());
-        context.put("chart_data", XmlChartBuilder.donutChart(getTotalPasses(), getTotalFails(), getTotalSkipped(), getTotalPending()));
+        context.put("chart_data", PieChartBuilder.build(getTotalPasses(), getTotalFails(), getTotalSkipped(), getTotalPending()));
         context.put("time_stamp", timeStamp());
         context.put("total_duration", getTotalDuration());
         context.put("jenkins_base", pluginUrlPath);
