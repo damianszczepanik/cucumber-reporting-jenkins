@@ -8,6 +8,6 @@ The code has been extracted from [jenkins-cucumber-jvm-reports-plugin-java](http
 Yet there it was bundled for Jenkins only. This project aims at providing the basis for different kinds of plugins.
 
 ## Related Projects
-[Jenkins Plugin for Cucumber JVM](https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java)
-[Maven Plugin for Cucumber JVM](https://github.com/PE-INTERNATIONAL/maven-cucumber-jvm-report-plugin)
+* [Jenkins Plugin for Cucumber JVM](https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java)
+* [Maven Plugin for Cucumber JVM](https://github.com/PE-INTERNATIONAL/maven-cucumber-jvm-report-plugin)
 
