@@ -10,7 +10,6 @@ import java.util.List;
 
 
 public class TagObject {
-
     private String tagName;
     private List<ScenarioTag> scenarios = new ArrayList<ScenarioTag>();
     private List<Element> elements = new ArrayList<Element>();
@@ -50,9 +49,9 @@ public class TagObject {
         Long duration = 0L;
         for (ScenarioTag scenarioTag : scenarios) {
             if (Util.hasSteps(scenarioTag)) {
-            for (Step step : scenarioTag.getScenario().getSteps()) {
-                duration = duration + step.getDuration();
-            }
+                for (Step step : scenarioTag.getScenario().getSteps()) {
+                    duration = duration + step.getDuration();
+                }
             }
         }
         return Util.formatDuration(duration);
@@ -87,10 +86,22 @@ public class TagObject {
     private List<Util.Status> getStatuses() {
         List<Util.Status> statuses = new ArrayList<Util.Status>();
         for (ScenarioTag scenarioTag : scenarios) {
-            if (Util.hasSteps(scenarioTag)) {
+            if (Util.hasSteps(scenarioTag) && !scenarioTag.getScenario().isBackground()
+                    && !scenarioTag.getScenario().isOutline()) {
                 for (Step step : scenarioTag.getScenario().getSteps()) {
                     statuses.add(step.getStatus());
                 }
+            }
+        }
+        return statuses;
+    }
+
+    private List<Util.Status> getScenarioStatuses() {
+        List<Util.Status> statuses = new ArrayList<Util.Status>();
+        for (ScenarioTag scenarioTag : scenarios) {
+            if (Util.hasSteps(scenarioTag) && !scenarioTag.getScenario().isBackground()
+                    && !scenarioTag.getScenario().isOutline()) {
+                statuses.add(scenarioTag.getScenario().getStatus());
             }
         }
         return statuses;
@@ -103,7 +114,6 @@ public class TagObject {
                 return step.getStatus();
             }
         };
-
         Element[] elementList = new Element[elements.size()];
         List<Util.Status> results = Util.collectScenarios(elements.toArray(elementList), scenarioStatus);
         return results.contains(Util.Status.FAILED) ? Util.Status.FAILED : Util.Status.PASSED;
@@ -113,4 +123,15 @@ public class TagObject {
         return getStatus().toString().toLowerCase();
     }
 
+    public int getNumberOfPassesScenarios() {
+        return Util.findStatusCount(getScenarioStatuses(), Util.Status.PASSED);
+    }
+
+    public int getNumberOfFailuresScenarios() {
+        return Util.findStatusCount(getScenarioStatuses(), Util.Status.FAILED);
+    }
+
+    public int getNumberOfSkippedScenarios() {
+        return Util.findStatusCount(getScenarioStatuses(), Util.Status.SKIPPED);
+    }
 }

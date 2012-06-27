@@ -47,7 +47,7 @@
         <dependency>
         	<groupId>maven</groupId>
         	<artifactId>velocity</artifactId>
-        	<version>1.5-20060721.044818</version>
+        	<version>1.6</version>
         </dependency>
         <dependency>
             <groupId>com.jamesmurty.utils</groupId>

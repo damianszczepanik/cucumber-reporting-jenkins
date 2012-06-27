@@ -19,5 +19,12 @@ public class ScenarioTag {
     public String getParentFeatureUri(){
         return parentFeatureUri;
     }
-    
+
+    @Override
+    public String toString() {
+        return "ScenarioTag{" +
+                "scenario=" + scenario +
+                ", parentFeatureUri='" + parentFeatureUri + '\'' +
+                '}';
+    }
 }

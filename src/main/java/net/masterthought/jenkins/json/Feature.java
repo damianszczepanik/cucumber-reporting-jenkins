@@ -64,7 +64,7 @@ public class Feature {
         List<Util.Status> stepStatuses = new ArrayList<Util.Status>();
         if (Util.itemExists(elements)) {
             for (Element element : elements) {
-                if (Util.hasSteps(element)) {
+                if (Util.hasSteps(element) && !element.isOutline()) {
                     for (Step step : element.getSteps()) {
                         stepStatuses.add(step.getStatus());
                     }
@@ -73,6 +73,19 @@ public class Feature {
         }
         return stepStatuses;
     }
+
+    private List<Util.Status> lookUpScenarios() {
+        List<Util.Status> stepStatuses = new ArrayList<Util.Status>();
+        if (Util.itemExists(elements)) {
+            for (Element element : elements) {
+                if (Util.hasSteps(element) && !element.isOutline() && !element.isBackground()) {
+                    stepStatuses.add(element.getStatus());
+                }
+            }
+        }
+        return stepStatuses;
+    }
+
 
     public String getName() {
         return Util.itemExists(name) ? Util.result(getStatus()) + "<div class=\"feature-line\"><span class=\"feature-keyword\">Feature:</span> " + name + "</div>" + Util.closeDiv() : "";
@@ -110,7 +123,17 @@ public class Feature {
     }
 
     public int getNumberOfScenarios() {
-        return Util.itemExists(elements) ? elements.length : 0;
+        if (!Util.itemExists(elements)) {
+            return 0;
+        }
+        int numberOfScenarios = 0;
+        for (Element element : elements) {
+            if (!element.isOutline() && !element.isBackground()) {
+                numberOfScenarios++;
+            }
+        }
+
+        return numberOfScenarios;
     }
 
     public int getNumberOfSteps() {
@@ -131,6 +154,22 @@ public class Feature {
 
     public int getNumberOfSkipped() {
         return Util.findStatusCount(lookUpSteps(), Util.Status.SKIPPED);
+    }
+
+    public int getNumberOfScenariosPasses() {
+        return Util.findStatusCount(lookUpScenarios(), Util.Status.PASSED);
+    }
+
+    public int getNumberOfScenariosFailures() {
+        return Util.findStatusCount(lookUpScenarios(), Util.Status.FAILED);
+    }
+
+    public int getNumberOfScenariosPending() {
+        return Util.findStatusCount(lookUpScenarios(), Util.Status.UNDEFINED);
+    }
+
+    public int getNumberOfScenariosSkipped() {
+        return Util.findStatusCount(lookUpScenarios(), Util.Status.SKIPPED);
     }
 
     public String getRawStatus() {

@@ -5,16 +5,30 @@ import net.masterthought.jenkins.json.Element;
 import net.masterthought.jenkins.json.Feature;
 import net.masterthought.jenkins.json.Step;
 import net.masterthought.jenkins.json.Util;
+import net.masterthought.jenkins.util.UnzipUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +43,9 @@ public class FeatureReportGenerator {
     private List<Feature> allFeatures;
     private List<TagObject> allTags;
     private static final String charEncoding = "UTF-8";
+    private int totalScenarioSkipped;
+    private int totalScenarioPassed;
+    private int totalScenarioFailed;
 
     public FeatureReportGenerator(List<String> jsonResultFiles, File reportDirectory, String pluginUrlPath, String buildNumber, String buildProject, boolean skippedFails, boolean undefinedFails) throws IOException {
         ConfigurationOptions.setSkippedFailsBuild(skippedFails);
@@ -36,11 +53,35 @@ public class FeatureReportGenerator {
         this.jsonResultFiles = parseJsonResults(jsonResultFiles);
         this.allFeatures = listAllFeatures();
         this.totalSteps = getAllStepStatuses();
+        getTotalScenarioStatuses();
         this.reportDirectory = reportDirectory;
         this.buildNumber = buildNumber;
         this.buildProject = buildProject;
         this.pluginUrlPath = getPluginUrlPath(pluginUrlPath);
         this.allTags = findTagsInFeatures();
+    }
+
+    private void getTotalScenarioStatuses() {
+        this.totalScenarioPassed = 0;
+        this.totalScenarioFailed = 0;
+        this.totalScenarioSkipped = 0;
+
+        for (Feature feature : allFeatures) {
+            if (Util.hasScenarios(feature)) {
+                for (Element element : feature.getElements()) {
+                    if (Util.hasSteps(element) && !element.isBackground() && !element.isOutline()) {
+                        if (element.getStatus().equals(Util.Status.FAILED)) {
+                            totalScenarioFailed++;
+                        } else if (element.getStatus().equals(Util.Status.PASSED)) {
+                            totalScenarioPassed++;
+                        } else if (element.getStatus().equals(Util.Status.SKIPPED)) {
+                            totalScenarioPassed++;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     public boolean getBuildStatus() {
@@ -58,10 +99,29 @@ public class FeatureReportGenerator {
     }
 
     public void generateReports() throws Exception {
+        copyResources();
         generateFeatureReports();
         generateFeatureOverview();
         generateTagReports();
         generateTagOverview();
+    }
+
+    private void copyResources() throws IOException, URISyntaxException {
+        final File tmpResourcesArchive = new File(FileUtils.getTempDirectory(), "theme.zip");
+
+        InputStream resourceArchiveInputStream = FeatureReportGenerator.class.getResourceAsStream("themes/blue.zip");
+        if (resourceArchiveInputStream == null) {
+            resourceArchiveInputStream = FeatureReportGenerator.class.getResourceAsStream("/themes/blue.zip");
+        }
+        OutputStream resourceArchiveOutputStream = new FileOutputStream(tmpResourcesArchive);
+        try {
+            IOUtils.copy(resourceArchiveInputStream, resourceArchiveOutputStream);
+        } finally {
+            IOUtils.closeQuietly(resourceArchiveInputStream);
+            IOUtils.closeQuietly(resourceArchiveOutputStream);
+        }
+        UnzipUtils.unzipToFile(tmpResourcesArchive, reportDirectory);
+        FileUtils.deleteQuietly(tmpResourcesArchive);
     }
 
     public void generateFeatureOverview() throws Exception {
@@ -79,11 +139,25 @@ public class FeatureReportGenerator {
         context.put("total_fails", getTotalFails());
         context.put("total_skipped", getTotalSkipped());
         context.put("total_pending", getTotalPending());
-        context.put("chart_data", XmlChartBuilder.donutChart(getTotalPasses(), getTotalFails(), getTotalSkipped(), getTotalPending()));
+        context.put("total_scenario_passes", getTotalScenarioPasses());
+        context.put("total_scenario_fails", getTotalScenarioFails());
+        context.put("total_scenario_skipped", getTotalScenarioSkipped());
         context.put("time_stamp", timeStamp());
         context.put("total_duration", getTotalDuration());
         context.put("jenkins_base", pluginUrlPath);
         generateReport("feature-overview.html", featureOverview, context);
+    }
+
+    private int getTotalScenarioSkipped() {
+        return totalScenarioSkipped;
+    }
+
+    private int getTotalScenarioFails() {
+        return totalScenarioFailed;
+    }
+
+    private int getTotalScenarioPasses() {
+        return totalScenarioPassed;
     }
 
     public void generateFeatureReports() throws Exception {
@@ -141,8 +215,12 @@ public class FeatureReportGenerator {
         context.put("total_fails", getTotalTagFails());
         context.put("total_skipped", getTotalTagSkipped());
         context.put("total_pending", getTotalTagPending());
-        context.put("chart_data", XmlChartBuilder.StackedColumnChart(allTags));
+        context.put("total_scenario_passes", getTotalScenarioTagPasses());
+        context.put("total_scenario_fails", getTotalScenarioTagFails());
+        context.put("total_scenario_skipped", getTotalScenarioTagSkipped());
         context.put("total_duration", getTotalTagDuration());
+        context.put("tagScenariosData", generateTagOverviewChartScenariosData());
+        context.put("tagStepsData", generateTagOverviewChartStepsData());
         context.put("time_stamp", timeStamp());
         context.put("jenkins_base", pluginUrlPath);
         generateReport("tag-overview.html", featureOverview, context);
@@ -159,7 +237,6 @@ public class FeatureReportGenerator {
                     tagMap = createOrAppendToTagMap(tagMap, feature.getTagList(), scenarioList);
                 }
             }
-
             if (Util.hasScenarios(feature)) {
                 for (Element scenario : feature.getElements()) {
                     if (scenario.hasTags()) {
@@ -337,12 +414,36 @@ public class FeatureReportGenerator {
         return pending;
     }
 
+    private int getTotalScenarioTagPasses() {
+        int passes = 0;
+        for (TagObject tag : allTags) {
+            passes += tag.getNumberOfPassesScenarios();
+        }
+        return passes;
+    }
+
+    private int getTotalScenarioTagFails() {
+        int failed = 0;
+        for (TagObject tag : allTags) {
+            failed += tag.getNumberOfFailuresScenarios();
+        }
+        return failed;
+    }
+
+    private int getTotalScenarioTagSkipped() {
+        int skipped = 0;
+        for (TagObject tag : allTags) {
+            skipped += tag.getNumberOfSkippedScenarios();
+        }
+        return skipped;
+    }
+
     private List<Util.Status> getAllStepStatuses() {
         List<Util.Status> steps = new ArrayList<Util.Status>();
         for (Feature feature : allFeatures) {
             if (Util.hasScenarios(feature)) {
                 for (Element scenario : feature.getElements()) {
-                    if (Util.hasSteps(scenario)) {
+                    if (Util.hasSteps(scenario) && !scenario.isOutline()) {
                         for (Step step : scenario.getSteps()) {
                             steps.add(step.getStatus());
                         }
@@ -389,6 +490,35 @@ public class FeatureReportGenerator {
         props.setProperty("resource.loader", "class");
         props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         return props;
+    }
+
+    private List<List<String>> generateTagOverviewChartScenariosData() {
+        List<List<String>> tagOverviewData = new ArrayList<List<String>>();
+        List<String> row;
+        for (TagObject tagObject : allTags) {
+            row = new ArrayList<String>(4);
+            row.add(tagObject.getTagName());
+            row.add(Integer.toString(tagObject.getNumberOfPassesScenarios()));
+            row.add(Integer.toString(tagObject.getNumberOfFailuresScenarios()));
+            row.add(Integer.toString(tagObject.getNumberOfSkippedScenarios()));
+            tagOverviewData.add(row);
+        }
+        return tagOverviewData;
+    }
+
+    private List<List<String>> generateTagOverviewChartStepsData() {
+        List<List<String>> tagOverviewData = new ArrayList<List<String>>();
+        List<String> row;
+        for (TagObject tagObject : allTags) {
+            row = new ArrayList<String>(5);
+            row.add(tagObject.getTagName());
+            row.add(Integer.toString(tagObject.getNumberOfPasses()));
+            row.add(Integer.toString(tagObject.getNumberOfFailures()));
+            row.add(Integer.toString(tagObject.getNumberOfSkipped()));
+            row.add(Integer.toString(tagObject.getNumberOfPending()));
+            tagOverviewData.add(row);
+        }
+        return tagOverviewData;
     }
 
     private String getReportStatusColour(Feature feature) {

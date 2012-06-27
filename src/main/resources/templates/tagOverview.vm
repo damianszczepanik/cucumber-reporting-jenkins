@@ -3,27 +3,61 @@
 <head>
     <script language="javascript">AC_FL_RunContent = 0;</script>
     <script language="javascript"> DetectFlashVer = 0; </script>
-    <script src="${jenkins_base}plugin/cucumber-reports/charts/AC_RunActiveContent.js" language="javascript"></script>
-    <script language="JavaScript" type="text/javascript">
-        <!--
-        var requiredMajorVersion = 10;
-        var requiredMinorVersion = 0;
-        var requiredRevision = 45;
-        -->
-    </script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Cucumber-JVM Html Reports - Tag Overview</title>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css"
+    <link rel="stylesheet" href="css/style.css" type="text/css"
           media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css"
+    <link rel="stylesheet" href="css/skin/style.css" type="text/css"
           media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css"
+    <link rel="stylesheet" href="css/960.css" type="text/css"
           media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css"
+    <link rel="stylesheet" href="css/reset.css" type="text/css"
           media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css"
+    <link rel="stylesheet" href="css/text.css" type="text/css"
           media="screen"/>
-    <link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico"/>
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawCharts);
+        function drawCharts() {
+            // Create and populate the data table.
+            var stepsData = google.visualization.arrayToDataTable([
+                ["Tags", "Passed", "Failed", "Skipped", "Pending"]
+                #foreach($tagRow in $tagStepsData)
+                    ,['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2), $tagRow.get(3), $tagRow.get(4)]
+                #end
+            ]);
+            var scenariosData = google.visualization.arrayToDataTable([
+                ["Tags", "Passed", "Failed", "Skipped"]
+                #foreach($tagRow in $tagScenariosData)
+                    ,['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2), $tagRow.get(3)]
+                #end
+            ]);
+
+            // Create and draw the visualization.
+            new google.visualization.ColumnChart(document.getElementById('tagsOverviewScenariosChart')).
+                    draw(scenariosData,
+                    {title:"Tag overview by Scenario",
+                        isStacked:true,
+                        colors:['green', 'red', 'blue', 'orange'],
+                        height:400,
+                        vAxis:{title:"Scenarios"},
+                        hAxis:{title:"Tags"}
+                    }
+            );
+
+            new google.visualization.ColumnChart(document.getElementById('tagsOverviewStepsChart')).
+                    draw(stepsData,
+                    {title:"Tag overview by Steps",
+                        isStacked:true,
+                        colors:['green', 'red', 'blue', 'orange'],
+                        height:400,
+                        vAxis:{title:"Steps"},
+                        hAxis:{title:"Tags"}}
+            );
+        }
+    </script>
     <style>
         .feature-keyword {
             font-weight: bold;
@@ -129,7 +163,9 @@
 
         <div class="grid_6" id="nav">
             <ul>
-                <li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
+                #if ($build_number)
+                    <li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
+                #end
                 <li><a href="feature-overview.html">Feature Overview</a></li>
             </ul>
         </div>
@@ -138,64 +174,26 @@
 <div id="fullwidth_gradient">
     <div class="container_12">
         <div class="grid_9 heading">
-            <h2>Tag Overview for Build: $build_number</h2>
+            <h2>Tag Overview#if ($build_number) for Build: $build_number#end</h2>
             <span class="subhead">The following graph shows number of steps passing, failing and skipped for this build:</span>
         </div>
     </div>
 </div>
 
 <div class="container_12">
-    <div class="grid_12">
+<div class="grid_12">
 
-        #if($tags.isEmpty())
-            <div><p>You have no tags in your cucumber features</p></div>
-        #else
+    #if($tags.isEmpty())
+        <div><p>You have no tags in your cucumber features</p></div>
+    #else
 
-        
-        <div style="text-align:center;"><script language="JavaScript" type="text/javascript">
-            <!--
-            if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
-                alert("This page requires AC_RunActiveContent.js.");
-            } else {
-                var hasRightVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
-                if(hasRightVersion) {
-                    AC_FL_RunContent(
-                            'codebase', 'http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,45,2',
-                            'width', '600',
-                            'height', '350',
-                            'scale', 'noscale',
-                            'salign', 'TL',
-                            'bgcolor', '#777788',
-                            'wmode', 'opaque',
-                            'movie', '${jenkins_base}plugin/cucumber-reports/charts/charts',
-                            'src', '${jenkins_base}plugin/cucumber-reports/charts/charts',
-                            'FlashVars', "library_path=${jenkins_base}plugin/cucumber-reports/charts/charts_library&xml_data=$chart_data",
-                            'id', 'my_chart',
-                            'name', 'my_chart',
-                            'menu', 'true',
-                            'allowFullScreen', 'true',
-                            'allowScriptAccess','sameDomain',
-                            'quality', 'high',
-                            'align', 'middle',
-                            'pluginspage', 'http://www.macromedia.com/go/getflashplayer',
-                            'play', 'true',
-                            'devicefont', 'false'
-                    );
-                } else {
-                    var alternateContent = 'This content requires the Adobe Flash Player. '
-                            + '<u><a href=http://www.macromedia.com/go/getflash/>Get Flash</a></u>.';
-                    document.write(alternateContent);
-                }
-            }
-            // -->
-        </script>
-            <noscript>
-                <P>This content requires JavaScript.</P>
-            </noscript>
+        <div style="text-align:center;">
+            <div id="tagsOverviewScenariosChart"></div>
+            <div id="tagsOverviewStepsChart"></div>
         </div>
         <br/>
 
-        <div class="grid_12 hr"></div>
+        <div class="grid_12"></div>
 
         <div>
             <br/>
@@ -206,10 +204,13 @@
                     <th>Tag</th>
                     <th>Scenarios</th>
                     <th>Steps</th>
-                    <th>Passed</th>
-                    <th>Failed</th>
-                    <th>Skipped</th>
-                    <th>Pending</th>
+                    <th>Passed Scenarios</th>
+                    <th>Failed Scenarios</th>
+                    <th>Skipped Scenarios</th>
+                    <th>Passed Steps</th>
+                    <th>Failed Steps</th>
+                    <th>Skipped Steps</th>
+                    <th>Pending Steps</th>
                     <th>Duration</th>
                     <th>Status</th>
                 </tr>
@@ -228,6 +229,9 @@
                         <td style="text-align:left;"><a href="$tag.getFileName()">$tag.getTagName()</a></td>
                         <td>$tag.getNumberOfScenarios()</td>
                         <td>$tag.getNumberOfSteps()</td>
+                        <td>$tag.getNumberOfPassesScenarios()</td>
+                        <td>$tag.getNumberOfFailuresScenarios()</td>
+                        <td>$tag.getNumberOfSkippedScenarios()</td>
                         <td>$tag.getNumberOfPasses()</td>
                         <td>$tag.getNumberOfFailures()</td>
                         <td>$tag.getNumberOfSkipped()</td>
@@ -241,6 +245,9 @@
                     <td style="background-color:lightgray;font-weight:bold;">$total_tags</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_scenarios</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
+                    <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>
+                    <td style="background-color:lightgray;font-weight:bold;">$total_scenario_fails</td>
+                    <td style="background-color:lightgray;font-weight:bold;">$total_scenario_skipped</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
@@ -252,14 +259,14 @@
         </div>
 
     </div>
-</div>
+    </div>
 
-        #end
+    #end
 
 <div class="container_12">
     <div class="grid_12 hr"></div>
     <div class="grid_12 footer">
-        <p style="text-align:center;">Cucumber-JVM Jenkins Report Plugin - $time_stamp</p>
+        <p style="text-align:right;">Created at $time_stamp</p>
     </div>
 </div>
 <div class="clear"></div>
