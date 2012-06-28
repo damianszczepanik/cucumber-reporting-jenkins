@@ -187,7 +187,7 @@
                 </tr>
 
                 <tr>
-                    <td><a href="$feature.getFileName()">$feature.getRawName()</a></td>
+                    <td><a href="${project.getName()}-$feature.getFileName()">$feature.getRawName()</a></td>
                     <td>$feature.getNumberOfScenarios()</td>
                     <td>$feature.getNumberOfSteps()</td>
                     <td>$feature.getNumberOfScenariosPasses()</td>

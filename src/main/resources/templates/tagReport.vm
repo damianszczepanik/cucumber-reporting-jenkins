@@ -214,7 +214,7 @@
             #foreach($scenario in $tag.getScenarios())
                 #if (!$scenario.getScenario().isOutline())
                 <div style="margin-bottom:20px;padding:15px;">
-                    <div><a href="$scenario.getParentFeatureUri()">View Feature File</a></div>
+                    <div><a href="${project.getName()}-$scenario.getParentFeatureUri()">View Feature File</a></div>
                     $scenario.getScenario().getName()
                     #foreach($step in $scenario.getScenario().getSteps())
                         $step.getName()

@@ -225,7 +225,7 @@
                     #end
 
                     <tr>
-                        <td style="text-align:left;"><a href="$feature.getFileName()">$feature.getRawName()</a></td>
+                        <td style="text-align:left;"><a href="${project.getName()}-$feature.getFileName()">$feature.getRawName()</a></td>
                         <td>$feature.getNumberOfScenarios()</td>
                         <td>$feature.getNumberOfSteps()</td>
                         <td>$feature.getNumberOfScenariosPasses()</td>
