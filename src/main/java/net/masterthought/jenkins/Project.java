@@ -5,8 +5,7 @@ import net.masterthought.jenkins.json.Feature;
 import net.masterthought.jenkins.json.Step;
 import net.masterthought.jenkins.json.Tag;
 import net.masterthought.jenkins.json.Util;
-import org.apache.commons.collections.map.MultiValueMap;
-import org.codehaus.plexus.util.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * User: dpayne2
@@ -33,7 +31,6 @@ public class Project {
     private int numberOfStepsPending = 0;
     private int numberOfScenariosFailed = 0;
     private int numberOfScenariosPassed = 0;
-    private int numberOfScenariosSkipped = 0;
     private List<Feature> features;
     private List<TagObject> tags;
     private int numberOfSteps;
@@ -57,7 +54,7 @@ public class Project {
 
             if (feature.hasTags()) {
                 for (Element scenario : feature.getElements()) {
-                    scenarioList.add(new ScenarioTag(scenario, feature.getFileName()));
+                    scenarioList.add(new ScenarioTag(scenario, getName()+"-"+feature.getFileName()));
                     tagMap = createOrAppendToTagMap(tagMap, feature.getTagList(), scenarioList);
                 }
             }
@@ -65,7 +62,8 @@ public class Project {
             if (Util.hasScenarios(feature)) {
                 for (Element scenario : feature.getElements()) {
                     if (scenario.hasTags()) {
-                        scenarioList = addScenarioUnlessExists(scenarioList, new ScenarioTag(scenario, feature.getFileName()));
+                        scenarioList = addScenarioUnlessExists(scenarioList, new ScenarioTag(scenario,
+                                getName()+"-"+feature.getFileName()));
                     }
                     tagMap = createOrAppendToTagMap(tagMap, scenario.getTagList(), scenarioList);
                 }
@@ -131,10 +129,7 @@ public class Project {
 
     public String getProjectName() {
         //remove directory path
-        String retval = FileUtils.removePath(this.fileName);
-
-        //remove extension
-        return FileUtils.removeExtension(retval);
+        return FilenameUtils.getBaseName(this.fileName);
     }
 
     public String getFormattedDuration() {
@@ -209,12 +204,13 @@ public class Project {
             numberOfScenariosFailed++;
         } else if (status.equals(Util.Status.PASSED)) {
             numberOfScenariosPassed++;
-        } else if (status.equals(Util.Status.SKIPPED)) {
-            numberOfScenariosSkipped++;
         }
     }
 
     private void addStepStatus(Util.Status status) {
+        if (status == null) {
+            return;
+        }
         if (status.equals(Util.Status.FAILED)) {
             numberOfStepsFailed++;
         } else if (status.equals(Util.Status.PASSED)) {
@@ -279,14 +275,6 @@ public class Project {
 
     public void setNumberOfScenariosPassed(int numberOfScenariosPassed) {
         this.numberOfScenariosPassed = numberOfScenariosPassed;
-    }
-
-    public int getNumberOfScenariosSkipped() {
-        return numberOfScenariosSkipped;
-    }
-
-    public void setNumberOfScenariosSkipped(int numberOfScenariosSkipped) {
-        this.numberOfScenariosSkipped = numberOfScenariosSkipped;
     }
 
     public String getName() {

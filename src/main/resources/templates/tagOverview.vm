@@ -1,21 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <script language="javascript">AC_FL_RunContent = 0;</script>
-    <script language="javascript"> DetectFlashVer = 0; </script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Cucumber-JVM Html Reports - Tag Overview</title>
-    <link rel="stylesheet" href="css/style.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="css/skin/style.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="css/960.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="css/reset.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="css/text.css" type="text/css"
-          media="screen"/>
-    <link rel="shortcut icon" href="favicon.ico"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css" media="screen"/>
+    <link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico"/>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages:["corechart"]});
@@ -29,9 +22,9 @@
                 #end
             ]);
             var scenariosData = google.visualization.arrayToDataTable([
-                ["Tags", "Passed", "Failed", "Skipped"]
+                ["Tags", "Passed", "Failed"]
                 #foreach($tagRow in $tagScenariosData)
-                    ,['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2), $tagRow.get(3)]
+                    ,['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2)]
                 #end
             ]);
 
@@ -207,7 +200,6 @@
                     <th>Steps</th>
                     <th>Passed Scenarios</th>
                     <th>Failed Scenarios</th>
-                    <th>Skipped Scenarios</th>
                     <th>Passed Steps</th>
                     <th>Failed Steps</th>
                     <th>Skipped Steps</th>
@@ -227,12 +219,11 @@
                     #end
 
                     <tr>
-                        <td style="text-align:left;"><a href="$tag.getFileName()">$tag.getTagName()</a></td>
+                        <td style="text-align:left;"><a href="${project.getName()}-$tag.getFileName()">$tag.getTagName()</a></td>
                         <td>$tag.getNumberOfScenarios()</td>
                         <td>$tag.getNumberOfSteps()</td>
                         <td>$tag.getNumberOfScenariosPassed()</td>
                         <td>$tag.getNumberOfScenariosFailed()</td>
-                        <td>$tag.getNumberOfScenariosSkipped()</td>
                         <td>$tag.getNumberOfStepsPassed()</td>
                         <td>$tag.getNumberOfStepsFailed()</td>
                         <td>$tag.getNumberOfStepsSkipped()</td>
@@ -248,7 +239,6 @@
                     <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_scenario_fails</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_scenario_skipped</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>

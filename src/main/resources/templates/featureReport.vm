@@ -3,24 +3,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Cucumber-JVM Html Reports - Feature: $feature.getRawName() </title>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css"
-          media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css" media="screen"/>
     <link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico"/>
-    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/skin/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/960.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
-    <script type="text/javascript" src="http://d3js.org/d3.v2.min.js"></script>
-    <link rel="shortcut icon" href="favicon.ico"/>
     <style>
         .feature-keyword {
             font-weight: bold;
@@ -190,7 +178,6 @@
                     <th>Steps</th>
                     <th style="background-color:#C5D88A;">Passed Scenarios</th>
                     <th style="background-color:#D88A8A;">Failed Scenarios</th>
-                    <th style="background-color:#2DEAEC;">Skipped Scenarios</th>
                     <th style="background-color:#C5D88A;">Passed Steps</th>
                     <th style="background-color:#D88A8A;">Failed Steps</th>
                     <th style="background-color:#2DEAEC;">Skipped Steps</th>
@@ -205,7 +192,6 @@
                     <td>$feature.getNumberOfSteps()</td>
                     <td>$feature.getNumberOfScenariosPasses()</td>
                     <td>$feature.getNumberOfScenariosFailures()</td>
-                    <td>$feature.getNumberOfScenariosSkipped()</td>
                     <td>$feature.getNumberOfPasses()</td>
                     <td>$feature.getNumberOfFailures()</td>
                     <td>$feature.getNumberOfSkipped()</td>

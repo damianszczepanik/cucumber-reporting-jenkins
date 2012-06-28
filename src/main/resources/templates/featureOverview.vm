@@ -1,20 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <script language="javascript">AC_FL_RunContent = 0;</script>
-    <script language="javascript"> DetectFlashVer = 0; </script>
-    <script language="JavaScript" type="text/javascript">
-        var requiredMajorVersion = 10;
-        var requiredMinorVersion = 0;
-        var requiredRevision = 45;
-    </script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Cucumber-JVM Html Reports - Feature Overview</title>
-    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/skin/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/960.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css" media="screen"/>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages:["corechart"]});
@@ -31,8 +24,7 @@
             var scenariosData = google.visualization.arrayToDataTable([
                 ['Steps', 'Status of Steps'],
                 ['Passed',     ${total_scenario_passes}],
-                ['Failed',      ${total_scenario_fails}],
-                ['Skipped', ${total_scenario_skipped}]
+                ['Failed',      ${total_scenario_fails}]
             ]);
 
             var stepsOptions = {
@@ -69,7 +61,7 @@
                     .draw(scenariosData, scenariosOptions);
         }
     </script>
-    <link rel="shortcut icon" href="favicon.ico"/>
+    <link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico"/>
     <style>
         .feature-keyword {
             font-weight: bold;
@@ -216,7 +208,6 @@
                     <th>Steps</th>
                     <th style="background-color:#C5D88A;">Passed Scenarios</th>
                     <th style="background-color:#D88A8A;">Failed Scenarios</th>
-                    <th style="background-color:#2DEAEC;">Skipped Scenarios</th>
                     <th style="background-color:#C5D88A;">Passed Steps</th>
                     <th style="background-color:#D88A8A;">Failed Steps</th>
                     <th style="background-color:#2DEAEC;">Skipped Steps</th>
@@ -239,7 +230,6 @@
                         <td>$feature.getNumberOfSteps()</td>
                         <td>$feature.getNumberOfScenariosPasses()</td>
                         <td>$feature.getNumberOfScenariosFailures()</td>
-                        <td>$feature.getNumberOfScenariosSkipped()</td>
                         <td>$feature.getNumberOfPasses()</td>
                         <td>$feature.getNumberOfFailures()</td>
                         <td>$feature.getNumberOfSkipped()</td>
@@ -255,7 +245,6 @@
                     <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_scenario_fails</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_scenario_skipped</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
                     <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>

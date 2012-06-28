@@ -3,23 +3,12 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Cucumber-JVM Html Reports - Tag: $tag.getTagName() </title>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css"
-          media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css" media="screen"/>
     <link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico"/>
-    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/skin/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/960.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
-    <link rel="shortcut icon" href="favicon.ico"/>
     <style>
         .feature-keyword {
             font-weight: bold;
@@ -189,7 +178,6 @@
                     <th>Steps</th>
                     <th style="background-color:#C5D88A;">Passed Scenarios</th>
                     <th style="background-color:#D88A8A;">Failed Scenarios</th>
-                    <th style="background-color:#2DEAEC;">Skipped Scenarios</th>
                     <th style="background-color:#C5D88A;">Passed Steps</th>
                     <th style="background-color:#D88A8A;">Failed Steps</th>
                     <th style="background-color:#2DEAEC;">Skipped Steps</th>
@@ -205,12 +193,11 @@
                 #end
 
                 <tr>
-                    <td><a href="$tag.getFileName()">$tag.getTagName()</a></td>
+                    <td><a href="${project.getName()}-$tag.getFileName()">$tag.getTagName()</a></td>
                     <td>$tag.getNumberOfScenarios()</td>
                     <td>$tag.getNumberOfSteps()</td>
                     <td>$tag.getNumberOfScenariosPassed()</td>
                     <td>$tag.getNumberOfScenariosFailed()</td>
-                    <td>$tag.getNumberOfScenariosSkipped()</td>
                     <td>$tag.getNumberOfStepsPassed()</td>
                     <td>$tag.getNumberOfStepsFailed()</td>
                     <td>$tag.getNumberOfStepsSkipped()</td>

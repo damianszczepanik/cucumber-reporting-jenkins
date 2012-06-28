@@ -19,7 +19,6 @@ public class TagObject {
     private int numberOfStepsPending = 0;
     private int numberOfScenariosFailed = 0;
     private int numberOfScenariosPassed = 0;
-    private int numberOfScenariosSkipped = 0;
     private int numberOfSteps = 0;
     private Long durationOfSteps = 0L;
 
@@ -51,12 +50,13 @@ public class TagObject {
             numberOfScenariosFailed++;
         } else if (status.equals(Util.Status.PASSED)) {
             numberOfScenariosPassed++;
-        } else if (status.equals(Util.Status.SKIPPED)) {
-            numberOfScenariosSkipped++;
         }
     }
 
     private void addStepStatus(Util.Status status) {
+        if (status == null) {
+            return;
+        }
         if (status.equals(Util.Status.FAILED)) {
             numberOfStepsFailed++;
         } else if (status.equals(Util.Status.PASSED)) {
@@ -146,14 +146,6 @@ public class TagObject {
 
     public void setNumberOfScenariosPassed(int numberOfScenariosPassed) {
         this.numberOfScenariosPassed = numberOfScenariosPassed;
-    }
-
-    public int getNumberOfScenariosSkipped() {
-        return numberOfScenariosSkipped;
-    }
-
-    public void setNumberOfScenariosSkipped(int numberOfScenariosSkipped) {
-        this.numberOfScenariosSkipped = numberOfScenariosSkipped;
     }
 
     public Util.Status getStatus() {

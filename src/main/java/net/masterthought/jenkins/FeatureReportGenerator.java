@@ -5,21 +5,14 @@ import net.masterthought.jenkins.json.Element;
 import net.masterthought.jenkins.json.Feature;
 import net.masterthought.jenkins.json.Step;
 import net.masterthought.jenkins.json.Util;
-import net.masterthought.jenkins.util.UnzipUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Writer;
-import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FeatureReportGenerator {
+    //todo: clean up this file, many methods can be removed or replaced with more efficient ones
 
     private Map<String, List<Feature>> jsonResultFiles;
     private File reportDirectory;
@@ -114,7 +108,6 @@ public class FeatureReportGenerator {
     }
 
     public void generateReports() throws Exception {
-        copyResources();
         generateProjectOverview();
         for (Project project : allProjects) {
             generateFeatureOverview(project);
@@ -142,29 +135,10 @@ public class FeatureReportGenerator {
         context.put("total_pending", getTotalPending());
         context.put("total_scenario_passes", getTotalScenarioPasses());
         context.put("total_scenario_fails", getTotalScenarioFails());
-        context.put("total_scenario_skipped", getTotalScenarioSkipped());
         context.put("time_stamp", timeStamp());
         context.put("total_duration", getTotalDuration());
         context.put("jenkins_base", pluginUrlPath);
         generateReport("project-overview.html", featureOverview, context);
-    }
-
-    private void copyResources() throws IOException, URISyntaxException {
-        final File tmpResourcesArchive = new File(FileUtils.getTempDirectory(), "theme.zip");
-
-        InputStream resourceArchiveInputStream = FeatureReportGenerator.class.getResourceAsStream("themes/blue.zip");
-        if (resourceArchiveInputStream == null) {
-            resourceArchiveInputStream = FeatureReportGenerator.class.getResourceAsStream("/themes/blue.zip");
-        }
-        OutputStream resourceArchiveOutputStream = new FileOutputStream(tmpResourcesArchive);
-        try {
-            IOUtils.copy(resourceArchiveInputStream, resourceArchiveOutputStream);
-        } finally {
-            IOUtils.closeQuietly(resourceArchiveInputStream);
-            IOUtils.closeQuietly(resourceArchiveOutputStream);
-        }
-        UnzipUtils.unzipToFile(tmpResourcesArchive, reportDirectory);
-        FileUtils.deleteQuietly(tmpResourcesArchive);
     }
 
     public void generateFeatureOverview(Project project) throws Exception {
@@ -185,7 +159,6 @@ public class FeatureReportGenerator {
         context.put("total_pending", project.getNumberOfStepsPending());
         context.put("total_scenario_passes", project.getNumberOfScenariosPassed());
         context.put("total_scenario_fails", project.getNumberOfScenariosFailed());
-        context.put("total_scenario_skipped", project.getNumberOfScenariosSkipped());
         context.put("time_stamp", timeStamp());
         context.put("total_duration", project.getFormattedDuration());
         context.put("jenkins_base", pluginUrlPath);
@@ -218,7 +191,7 @@ public class FeatureReportGenerator {
             context.put("scenarios", feature.getElements());
             context.put("time_stamp", timeStamp());
             context.put("jenkins_base", pluginUrlPath);
-            generateReport(feature.getFileName(), featureResult, context);
+            generateReport(project.getName()+"-"+feature.getFileName(), featureResult, context);
         }
     }
 
@@ -235,7 +208,7 @@ public class FeatureReportGenerator {
             context.put("build_project", buildProject);
             context.put("build_number", buildNumber);
             context.put("report_status_colour", getTagReportStatusColour(tagObject));
-            generateReport(tagObject.getTagName().replace("@", "").trim() + ".html", featureResult, context);
+            generateReport(project.getName()+"-"+tagObject.getTagName().replace("@", "").trim() + ".html", featureResult, context);
 
         }
     }
@@ -258,7 +231,6 @@ public class FeatureReportGenerator {
         context.put("total_pending", project.getNumberOfStepsPending());
         context.put("total_scenario_passes", project.getNumberOfScenariosPassed());
         context.put("total_scenario_fails", project.getNumberOfScenariosFailed());
-        context.put("total_scenario_skipped", project.getNumberOfScenariosSkipped());
         context.put("total_duration", project.getFormattedDuration());
         context.put("tagScenariosData", generateTagOverviewChartScenariosData(project));
         context.put("tagStepsData", generateTagOverviewChartStepsData(project));
@@ -471,14 +443,6 @@ public class FeatureReportGenerator {
         return failed;
     }
 
-    private int getTotalScenarioTagSkipped() {
-        int skipped = 0;
-        for (TagObject tag : allTags) {
-            skipped += tag.getNumberOfScenariosSkipped();
-        }
-        return skipped;
-    }
-
     private List<Util.Status> getAllStepStatuses() {
         List<Util.Status> steps = new ArrayList<Util.Status>();
         for (Feature feature : allFeatures) {
@@ -537,11 +501,10 @@ public class FeatureReportGenerator {
         List<List<String>> tagOverviewData = new ArrayList<List<String>>();
         List<String> row;
         for (TagObject tagObject : project.getTags()) {
-            row = new ArrayList<String>(4);
+            row = new ArrayList<String>(3);
             row.add(tagObject.getTagName());
             row.add(Integer.toString(tagObject.getNumberOfScenariosPassed()));
             row.add(Integer.toString(tagObject.getNumberOfScenariosFailed()));
-            row.add(Integer.toString(tagObject.getNumberOfScenariosSkipped()));
             tagOverviewData.add(row);
         }
         return tagOverviewData;
