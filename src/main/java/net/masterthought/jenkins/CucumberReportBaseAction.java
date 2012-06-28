@@ -30,7 +30,7 @@ public abstract class CucumberReportBaseAction implements Action {
 
     public void doDynamic(StaplerRequest req, StaplerResponse rsp) throws IOException, ServletException {
         DirectoryBrowserSupport dbs = new DirectoryBrowserSupport(this, new FilePath(this.dir()), this.getTitle(), "graph.gif", false);
-        dbs.setIndexFileName("feature-overview.html");
+        dbs.setIndexFileName("project-overview.html");
         dbs.generateResponse(req, rsp, this);
     }
 

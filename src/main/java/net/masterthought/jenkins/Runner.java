@@ -12,6 +12,7 @@ public class Runner {
         List<String> list = new ArrayList<String>();
 //        list.add("/Users/kings/.jenkins/jobs/cucumber-jvm/builds/7/cucumber-html-reports/cukes.json");
         list.add("/Users/dpayne2/Workspace/api/api-transfer/target/cucumber.json");
+        list.add("/Users/dpayne2/Desktop/cumber.json");
 
        FeatureReportGenerator featureReportGenerator = new FeatureReportGenerator(list,rd,"", null,"cucumber-jvm",false,true);
        featureReportGenerator.generateReports();

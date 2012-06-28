@@ -80,6 +80,10 @@ public class Element {
         return result;
     }
 
+    public Tag[] getRawTags() {
+        return tags;
+    }
+
     public boolean isOutline() {
         if (!keyword.equals(SCENARIO_OUTLINE_KEYWORD)) {
             return false;

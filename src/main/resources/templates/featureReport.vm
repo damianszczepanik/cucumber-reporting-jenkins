@@ -157,15 +157,16 @@
 <body id="top">
 <div id="fullwidth_header">
     <div class="container_12">
-        <h1 class="grid_4 logo"><a href="feature-overview.html" class='ie6fix'>Cucumber</a></h1>
+        <h1 class="grid_4 logo"><a href="project-overview.html" class='ie6fix'>Cucumber</a></h1>
 
         <div class="grid_6" id="nav">
             <ul>
                 #if ($build_number)
                     <li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
                 #end
-                <li><a href="tag-overview.html">Tag Overview</a></li>
-                <li><a href="feature-overview.html">Feature Overview</a></li>
+                <li><a href="project-overview.html">Project Overview</a></li>
+                <li><a href="$project.getProjectFeatureUri()">Feature Overview</a></li>
+                <li><a href="$project.getProjectTagUri()">Tag Overview</a></li>
             </ul>
         </div>
     </div>

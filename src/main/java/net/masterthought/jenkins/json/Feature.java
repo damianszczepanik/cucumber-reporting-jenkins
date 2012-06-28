@@ -195,6 +195,10 @@ public class Feature {
         return dateTime.getYear() + "" + dateTime.getMonthOfYear() + "" + dateTime.getDayOfMonth() + "" + dateTime.getHourOfDay() + "" + dateTime.getMinuteOfHour() + "" + dateTime.getSecondOfMinute() + "" + dateTime.getMillis();
     }
 
+    public Tag [] getRawTags() {
+        return tags;
+    }
+
 }
 
 

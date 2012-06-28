@@ -1,6 +1,5 @@
 package net.masterthought.jenkins;
 
-import net.masterthought.jenkins.json.Closure;
 import net.masterthought.jenkins.json.Element;
 import net.masterthought.jenkins.json.Step;
 import net.masterthought.jenkins.json.Util;
@@ -13,6 +12,61 @@ public class TagObject {
     private String tagName;
     private List<ScenarioTag> scenarios = new ArrayList<ScenarioTag>();
     private List<Element> elements = new ArrayList<Element>();
+    private int numberOfScenarios = 0;
+    private int numberOfStepsFailed = 0;
+    private int numberOfStepsPassed = 0;
+    private int numberOfStepsSkipped = 0;
+    private int numberOfStepsPending = 0;
+    private int numberOfScenariosFailed = 0;
+    private int numberOfScenariosPassed = 0;
+    private int numberOfScenariosSkipped = 0;
+    private int numberOfSteps = 0;
+    private Long durationOfSteps = 0L;
+
+    public TagObject(String tagName, List<ScenarioTag> scenarios) {
+        this.tagName = tagName;
+        this.scenarios = scenarios;
+        processTags();
+    }
+
+    private void processTags() {
+        for (ScenarioTag scenarioTag : scenarios) {
+            Element scenario = scenarioTag.getScenario();
+            if (Util.hasSteps(scenario) && !scenario.isOutline()) {
+                if (!scenario.isBackground()) {
+                    addScenarioStatus(scenario.getStatus());
+                    numberOfScenarios++;
+                }
+                for (Step step : scenario.getSteps()) {
+                    addStepStatus(step.getStatus());
+                    numberOfSteps++;
+                    durationOfSteps += step.getDuration();
+                }
+            }
+        }
+    }
+
+    private void addScenarioStatus(Util.Status status) {
+        if (status.equals(Util.Status.FAILED)) {
+            numberOfScenariosFailed++;
+        } else if (status.equals(Util.Status.PASSED)) {
+            numberOfScenariosPassed++;
+        } else if (status.equals(Util.Status.SKIPPED)) {
+            numberOfScenariosSkipped++;
+        }
+    }
+
+    private void addStepStatus(Util.Status status) {
+        if (status.equals(Util.Status.FAILED)) {
+            numberOfStepsFailed++;
+        } else if (status.equals(Util.Status.PASSED)) {
+            numberOfStepsPassed++;
+        } else if (status.equals(Util.Status.SKIPPED)) {
+            numberOfStepsSkipped++;
+        } else if (status.equals(Util.Status.UNDEFINED)) {
+            numberOfStepsPending++;
+        }
+    }
 
     public String getTagName() {
         return tagName;
@@ -26,112 +80,106 @@ public class TagObject {
         return scenarios;
     }
 
-    public void setScenarios(List<ScenarioTag> scenarioTagList) {
-        this.scenarios = scenarioTagList;
-    }
-
-    public TagObject(String tagName, List<ScenarioTag> scenarios) {
-        this.tagName = tagName;
+    public void setScenarios(List<ScenarioTag> scenarios) {
         this.scenarios = scenarios;
     }
 
-    private void getElements() {
-        for (ScenarioTag scenarioTag : scenarios) {
-            elements.add(scenarioTag.getScenario());
-        }
+    public List<Element> getElements() {
+        return elements;
     }
 
-    public Integer getNumberOfScenarios() {
-        return this.scenarios.size();
+    public void setElements(List<Element> elements) {
+        this.elements = elements;
     }
 
-    public String getDurationOfSteps() {
-        Long duration = 0L;
-        for (ScenarioTag scenarioTag : scenarios) {
-            if (Util.hasSteps(scenarioTag)) {
-                for (Step step : scenarioTag.getScenario().getSteps()) {
-                    duration = duration + step.getDuration();
-                }
-            }
-        }
-        return Util.formatDuration(duration);
+    public int getNumberOfScenarios() {
+        return numberOfScenarios;
     }
 
-    public int getNumberOfSteps() {
-        int totalSteps = 0;
-        for (ScenarioTag scenario : scenarios) {
-            if (Util.hasSteps(scenario)) {
-                totalSteps += scenario.getScenario().getSteps().length;
-            }
-        }
-        return totalSteps;
+    public void setNumberOfScenarios(int numberOfScenarios) {
+        this.numberOfScenarios = numberOfScenarios;
     }
 
-    public int getNumberOfPasses() {
-        return Util.findStatusCount(getStatuses(), Util.Status.PASSED);
+    public int getNumberOfStepsFailed() {
+        return numberOfStepsFailed;
     }
 
-    public int getNumberOfFailures() {
-        return Util.findStatusCount(getStatuses(), Util.Status.FAILED);
+    public void setNumberOfStepsFailed(int numberOfStepsFailed) {
+        this.numberOfStepsFailed = numberOfStepsFailed;
     }
 
-    public int getNumberOfSkipped() {
-        return Util.findStatusCount(getStatuses(), Util.Status.SKIPPED);
+    public int getNumberOfStepsPassed() {
+        return numberOfStepsPassed;
     }
 
-    public int getNumberOfPending() {
-        return Util.findStatusCount(getStatuses(), Util.Status.UNDEFINED);
+    public void setNumberOfStepsPassed(int numberOfStepsPassed) {
+        this.numberOfStepsPassed = numberOfStepsPassed;
     }
 
-    private List<Util.Status> getStatuses() {
-        List<Util.Status> statuses = new ArrayList<Util.Status>();
-        for (ScenarioTag scenarioTag : scenarios) {
-            if (Util.hasSteps(scenarioTag) && !scenarioTag.getScenario().isBackground()
-                    && !scenarioTag.getScenario().isOutline()) {
-                for (Step step : scenarioTag.getScenario().getSteps()) {
-                    statuses.add(step.getStatus());
-                }
-            }
-        }
-        return statuses;
+    public int getNumberOfStepsSkipped() {
+        return numberOfStepsSkipped;
     }
 
-    private List<Util.Status> getScenarioStatuses() {
-        List<Util.Status> statuses = new ArrayList<Util.Status>();
-        for (ScenarioTag scenarioTag : scenarios) {
-            if (Util.hasSteps(scenarioTag) && !scenarioTag.getScenario().isBackground()
-                    && !scenarioTag.getScenario().isOutline()) {
-                statuses.add(scenarioTag.getScenario().getStatus());
-            }
-        }
-        return statuses;
+    public void setNumberOfStepsSkipped(int numberOfStepsSkipped) {
+        this.numberOfStepsSkipped = numberOfStepsSkipped;
+    }
+
+    public int getNumberOfStepsPending() {
+        return numberOfStepsPending;
+    }
+
+    public void setNumberOfStepsPending(int numberOfStepsPending) {
+        this.numberOfStepsPending = numberOfStepsPending;
+    }
+
+    public int getNumberOfScenariosFailed() {
+        return numberOfScenariosFailed;
+    }
+
+    public void setNumberOfScenariosFailed(int numberOfScenariosFailed) {
+        this.numberOfScenariosFailed = numberOfScenariosFailed;
+    }
+
+    public int getNumberOfScenariosPassed() {
+        return numberOfScenariosPassed;
+    }
+
+    public void setNumberOfScenariosPassed(int numberOfScenariosPassed) {
+        this.numberOfScenariosPassed = numberOfScenariosPassed;
+    }
+
+    public int getNumberOfScenariosSkipped() {
+        return numberOfScenariosSkipped;
+    }
+
+    public void setNumberOfScenariosSkipped(int numberOfScenariosSkipped) {
+        this.numberOfScenariosSkipped = numberOfScenariosSkipped;
     }
 
     public Util.Status getStatus() {
-        getElements();
-        Closure<String, Element> scenarioStatus = new Closure<String, Element>() {
-            public Util.Status call(Element step) {
-                return step.getStatus();
-            }
-        };
-        Element[] elementList = new Element[elements.size()];
-        List<Util.Status> results = Util.collectScenarios(elements.toArray(elementList), scenarioStatus);
-        return results.contains(Util.Status.FAILED) ? Util.Status.FAILED : Util.Status.PASSED;
+        if (numberOfScenariosFailed != 0) {
+            return Util.Status.FAILED;
+        }
+        return Util.Status.PASSED;
     }
 
-    public String getRawStatus() {
-        return getStatus().toString().toLowerCase();
+    public int getNumberOfSteps() {
+        return numberOfSteps;
     }
 
-    public int getNumberOfPassesScenarios() {
-        return Util.findStatusCount(getScenarioStatuses(), Util.Status.PASSED);
+    public void setNumberOfSteps(int numberOfSteps) {
+        this.numberOfSteps = numberOfSteps;
     }
 
-    public int getNumberOfFailuresScenarios() {
-        return Util.findStatusCount(getScenarioStatuses(), Util.Status.FAILED);
+    public Long getDurationOfSteps() {
+        return durationOfSteps;
     }
 
-    public int getNumberOfSkippedScenarios() {
-        return Util.findStatusCount(getScenarioStatuses(), Util.Status.SKIPPED);
+    public void setDurationOfSteps(Long durationOfSteps) {
+        this.durationOfSteps = durationOfSteps;
+    }
+
+    public String getFormattedDuration() {
+        return Util.formatDuration(getDurationOfSteps());
     }
 }

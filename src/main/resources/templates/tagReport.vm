@@ -163,8 +163,9 @@
                 #if ($build_number)
                     <li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
                 #end
-                <li><a href="feature-overview.html">Feature Overview</a></li>
-                <li><a href="tag-overview.html">Tag Overview</a></li>
+                <li><a href="project-overview.html">Project Overview</a></li>
+                <li><a href="$project.getProjectFeatureUri()">Feature Overview</a></li>
+                <li><a href="$project.getProjectTagUri()">Tag Overview</a></li>
             </ul>
         </div>
     </div>
@@ -197,19 +198,25 @@
                     <th>Status</th>
                 </tr>
 
+                #if($tag.getStatus().toString() == "PASSED")
+                    #set($bgcolour = "#C5D88A")
+                #else
+                    #set($bgcolour = "#D88A8A")
+                #end
+
                 <tr>
                     <td><a href="$tag.getFileName()">$tag.getTagName()</a></td>
                     <td>$tag.getNumberOfScenarios()</td>
                     <td>$tag.getNumberOfSteps()</td>
-                    <td>$tag.getNumberOfPassesScenarios()</td>
-                    <td>$tag.getNumberOfFailuresScenarios()</td>
-                    <td>$tag.getNumberOfSkippedScenarios()</td>
-                    <td>$tag.getNumberOfPasses()</td>
-                    <td>$tag.getNumberOfFailures()</td>
-                    <td>$tag.getNumberOfSkipped()</td>
-                    <td>$tag.getNumberOfPending()</td>
-                    <td>$tag.getDurationOfSteps()</td>
-                    <td style="background-color: $report_status_colour;">$tag.getRawStatus()</td>
+                    <td>$tag.getNumberOfScenariosPassed()</td>
+                    <td>$tag.getNumberOfScenariosFailed()</td>
+                    <td>$tag.getNumberOfScenariosSkipped()</td>
+                    <td>$tag.getNumberOfStepsPassed()</td>
+                    <td>$tag.getNumberOfStepsFailed()</td>
+                    <td>$tag.getNumberOfStepsSkipped()</td>
+                    <td>$tag.getNumberOfStepsPending()</td>
+                    <td>$tag.getFormattedDuration()</td>
+                    <td style="background-color: $bgcolour;">$tag.getStatus()</td>
                 </tr>
 
             </table>
