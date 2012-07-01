@@ -2,155 +2,73 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Cucumber-JVM Html Reports - Feature Overview</title>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css" media="screen"/>
-    <link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico"/>
+    <title>Cucumber-JVM Html Reports - Project Overview</title>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/table.css" type="text/css" media="screen"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="js/raphael-min.js"></script>
+    <script src="js/g.raphael-min.js"></script>
+    <script src="js/g.pie-min.js"></script>
+    <link rel="shortcut icon" href="favicon.ico"/>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-        google.load("visualization", "1", {packages:["corechart"]});
-        google.setOnLoadCallback(drawCharts);
-        function drawCharts() {
-            var stepsData = google.visualization.arrayToDataTable([
-                ['Steps', 'Status of Steps'],
-                ['Passed',     ${total_passes}],
-                ['Failed',      ${total_fails}],
-                ['Skipped', ${total_skipped}],
-                ['Pending',  ${total_pending}]
-            ]);
+##    <script type="text/javascript">
+##        google.load("visualization", "1", {packages:["corechart"]});
+##        google.setOnLoadCallback(drawCharts);
+##        function drawCharts() {
+##            var scenariosData = google.visualization.arrayToDataTable([
+##                ['Scenarios', 'Status of Scenarios'],
+##                ['Passed',     ${total_scenario_passes}],
+##                ['Failed',      ${total_scenario_fails}]
+##            ]);
+##
+##            var scenariosOptions = {
+##                title:'Scenarios Overview',
+##                is3D:true,
+##                colors:['green', 'red', 'blue'],
+##                chartArea:{height:225}
+##            };
+##
+##            var scenariosChart = new google.visualization.PieChart(document.getElementById('scenarios_results_chart'))
+##                    .draw(scenariosData, scenariosOptions);
+##        }
+##
+##    </script>
+    <script>
+        window.onload = function () {
+            var r = Raphael('scenarios_results_chart'),
+                    pie = r.piechart(320, 240, 100, [${total_scenario_passes}, ${total_scenario_fails}],
+                            { legend: ["%%.%% - Passed", "Failed"], legendpos: "west", href: ["http://raphaeljs.com", "http://g.raphaeljs.com"]});
 
-            var scenariosData = google.visualization.arrayToDataTable([
-                ['Steps', 'Status of Steps'],
-                ['Passed',     ${total_scenario_passes}],
-                ['Failed',      ${total_scenario_fails}]
-            ]);
+            r.text(320, 100, "Scenarios overview for all projects").attr({ font: "20px sans-serif" });
+            pie.hover(function () {
+                this.sector.stop();
+                this.sector.scale(1.1, 1.1, this.cx, this.cy);
 
-            var stepsOptions = {
-                title:'Steps Overview',
-                is3D: true,
-                colors:['green', 'red', 'blue', 'orange'],
-                chartArea: {height:300}
-            };
+                if (this.label) {
+                    this.label[0].stop();
+                    this.label[0].attr({ r: 7.5 });
+                    this.label[1].attr({ "font-weight": 800 });
+                }
+            }, function () {
+                this.sector.animate({ transform: 's1 1 ' + this.cx + ' ' + this.cy }, 500, "bounce");
 
-            var scenariosOptions = {
-                title:'Scenarios Overview',
-                is3D: true,
-                colors:['green', 'red', 'blue'],
-                chartArea: {height:300}
-            };
-
-            var stepsChart = new google.visualization.PieChart(document.getElementById('steps_results_chart'))
-                    .draw(stepsData, stepsOptions);
-            var scenariosChart = new google.visualization.PieChart(document.getElementById('scenarios_results_chart'))
-                    .draw(scenariosData, scenariosOptions);
-        }
+                if (this.label) {
+                    this.label[0].animate({ r: 5 }, 500, "bounce");
+                    this.label[1].attr({ "font-weight": 400 });
+                }
+            });
+        };
     </script>
     <link rel="shortcut icon" href="favicon.ico"/>
-    <style>
-        .feature-keyword {
-            font-weight: bold;
-        }
-
-        .feature-description {
-            padding-left: 15px;
-            font-style: italic;
-            background-color: beige;
-        }
-
-        .feature-role {
-            font-weight: bold;
-        }
-
-        .feature-action {
-            font-weight: bold;
-        }
-
-        .feature-value {
-            font-weight: bold;
-        }
-
-        .feature-tags {
-            padding-top: 10px;
-            padding-left: 15px;
-            color: darkblue;
-        }
-
-        .scenario-keyword {
-            font-weight: bold;
-            padding-left: 15px;
-        }
-
-        .scenario-scenario_name {
-            padding-left: 15px;
-        }
-
-        .step-keyword {
-            font-weight: bold;
-            padding-left: 50px;
-        }
-
-        .step-error-message {
-            background-color: #FFEEEE;
-            padding-left: 50px;
-            border: 1px solid #D88A8A;
-        }
-
-        .passed {
-            background-color: #C5D88A;
-        }
-
-        .failed {
-            background-color: #D88A8A;
-        }
-
-        .skipped {
-            background-color: #2DEAEC;
-        }
-
-        .undefined {
-            background-color: #ebcc81;
-        }
-
-        table.stats-table {
-            color: black;
-            border-width: 1px;
-            border-spacing: 2px;
-            border-style: outset;
-            border-color: gray;
-            border-collapse: collapse;
-            background-color: white;
-        }
-
-        table.stats-table th {
-            color: black;
-            border-width: 1px;
-            padding: 5px;
-            border-style: inset;
-            border-color: gray;
-            background-color: #66CCEE;
-            -moz-border-radius:;
-        }
-
-        table.stats-table td {
-            color: black;
-            text-align: center;
-            border-width: 1px;
-            padding: 5px;
-            border-style: inset;
-            border-color: gray;
-            background-color: white;
-            -moz-border-radius:;
-        }
-    </style>
-
 </head>
 <body id="top">
 <div id="fullwidth_header">
     <div class="container_12">
-        <h1 class="grid_4 logo"><a href="feature-overview.html" class='ie6fix'>Cucumber</a></h1>
+        <h1 class="grid_4 logo"><a href="project-overview.html" class='ie6fix'>Cucumber</a></h1>
 
         <div class="grid_6" id="nav">
             <ul>
@@ -161,98 +79,68 @@
         </div>
     </div>
 </div>
-<div id="fullwidth_gradient">
-    <div class="container_12">
-        <div class="grid_9 heading">
-            <h2>Project Overview#if ($build_number) for Build: $build_number#end</h2>
-            <span class="subhead">The following graph shows number of steps passing, failing and skipped for this build:</span>
-        </div>
+<div id="fullwidth_gradient" class="pageHeader">
+    <div class="pageHeaderText">
+        <h2>Project Overview#if ($build_number) for Build: $build_number#end</h2>
     </div>
 </div>
 
-<div class="container_12">
-    <div class="grid_12">
-        <div id="pieChartContainer" style="width: 100%">
-            <div id="scenarios_results_chart" style="height: 425px"></div>
-            <div id="steps_results_chart" style="height: 425px"></div>
-            <noscript>
-                <P>This content requires JavaScript.</P>
-            </noscript>
-        </div>
-        <br/>
+<div id="pieChartContainer" class="pieChart">
+    <div id="scenarios_results_chart" style="height: 425px"></div>
+    <noscript>
+        <P>This content requires JavaScript.</P>
+    </noscript>
+</div>
+<div class="statsTable">
+    <h2>Project Statistics</h2>
+    <table class="bordered">
+        <tr>
+            <th>Project</th>
+            <th>Features</th>
+            <th>Scenarios</th>
+            <th>Steps</th>
+            <th>Passed Scenarios</th>
+            <th>Failed Scenarios</th>
+            <th>Duration</th>
+            <th>Status</th>
+        </tr>
 
-        <div class="grid_12"></div>
-        <div>
-            <br/>
+        #foreach($project in $projects)
 
-            <h2>Project Statistics</h2>
-            <table class="stats-table">
-                <tr>
-                    <th>Project</th>
-                    <th>Features</th>
-                    <th>Scenarios</th>
-                    <th>Steps</th>
-                    <th style="background-color:#C5D88A;">Passed Scenarios</th>
-                    <th style="background-color:#D88A8A;">Failed Scenarios</th>
-                    <th style="background-color:#C5D88A;">Passed Steps</th>
-                    <th style="background-color:#D88A8A;">Failed Steps</th>
-                    <th style="background-color:#2DEAEC;">Skipped Steps</th>
-                    <th style="background-color:#ebcc81;">Pending Steps</th>
-                    <th>Duration</th>
-                    <th>Status</th>
-                </tr>
+            #if($project.getStatus().toString() == "PASSED")
+                #set($bgcolour = "#C5D88A")
+            #else
+                #set($bgcolour = "#D88A8A")
+            #end
 
-                #foreach($project in $projects)
+            <tr onclick="window.location = '$project.getProjectFeatureUri()'">
+                <td style="text-align:left;"><a href="$project.getProjectFeatureUri()">$project.getName()</a>
+                </td>
+                <td>$project.getNumberOfFeatures()</td>
+                <td>$project.getNumberOfScenarios()</td>
+                <td>$project.getNumberOfSteps()</td>
+                <td>$project.getNumberOfScenariosPassed()</td>
+                <td>$project.getNumberOfScenariosFailed()</td>
+                <td>$project.getFormattedDuration()</td>
+                <td style="background-color: $bgcolour;">$project.getStatus()</td>
+            </tr>
+        #end
 
-                    #if($project.getStatus().toString() == "PASSED")
-                        #set($bgcolour = "#C5D88A")
-                    #else
-                        #set($bgcolour = "#D88A8A")
-                    #end
-
-                    <tr>
-                        <td style="text-align:left;"><a href="$project.getProjectFeatureUri()">$project.getName()</a></td>
-                        <td>$project.getNumberOfFeatures()</td>
-                        <td>$project.getNumberOfScenarios()</td>
-                        <td>$project.getNumberOfSteps()</td>
-                        <td>$project.getNumberOfScenariosPassed()</td>
-                        <td>$project.getNumberOfScenariosFailed()</td>
-                        <td>$project.getNumberOfStepsPassed()</td>
-                        <td>$project.getNumberOfStepsFailed()</td>
-                        <td>$project.getNumberOfStepsSkipped()</td>
-                        <td>$project.getNumberOfStepsPending()</td>
-                        <td>$project.getFormattedDuration()</td>
-                        <td style="background-color: $bgcolour;">$project.getStatus()</td>
-                    </tr>
-                #end
-
-                <tr>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_projects</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_features</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_scenarios</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_scenario_fails</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_pending</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
-                    <td style="background-color:lightgray;font-weight:bold;">Totals</td>
-                </tr>
-            </table>
-        </div>
-
-    </div>
+        <tr>
+            <td style="background-color:lightgray;font-weight:bold;">$total_projects</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_features</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_scenarios</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_scenario_fails</td>
+            <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
+            <td style="background-color:lightgray;font-weight:bold;">Totals</td>
+        </tr>
+    </table>
+    <p style="text-align:right;">Created at $time_stamp</p>
 </div>
 
-
-<div class="container_12">
-    <div class="grid_12 hr"></div>
-    <div class="grid_12 footer">
-        <p style="text-align:right;">Created at $time_stamp</p>
-    </div>
-</div>
 <div class="clear"></div>
+<div id="holder"></div>
 </body>
 </html>

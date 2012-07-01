@@ -3,12 +3,13 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Cucumber-JVM Html Reports - Tag: $tag.getTagName() </title>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css" media="screen"/>
-    <link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/table.css" type="text/css" media="screen"/>
+    <link rel="shortcut icon" href="favicon.ico"/>
     <style>
         .feature-keyword {
             font-weight: bold;
@@ -159,60 +160,56 @@
         </div>
     </div>
 </div>
-<div id="fullwidth_gradient">
-    <div class="container_12">
-        <div class="grid_9 heading">
-            <h2>Result for <span style="color:#66CCEE;">$tag.getTagName()</span> in Build: $build_number</h2>
-        </div>
+<div id="fullwidth_gradient" class="pageHeader">
+    <div class="pageHeaderText">
+        <h2>Result for <span style="color:#66CCEE;">$tag.getTagName()</span> in Build: $build_number</h2>
     </div>
 </div>
+<div class="statsTable">
+    <table class="bordered">
+        <tr>
+            <th>Tag</th>
+            <th>Scenarios</th>
+            <th>Steps</th>
+            <th style="background-color:#C5D88A;">Passed Scenarios</th>
+            <th style="background-color:#D88A8A;">Failed Scenarios</th>
+            <th style="background-color:#C5D88A;">Passed Steps</th>
+            <th style="background-color:#D88A8A;">Failed Steps</th>
+            <th style="background-color:#2DEAEC;">Skipped Steps</th>
+            <th style="background-color:#ebcc81;">Pending Steps</th>
+            <th>Duration</th>
+            <th>Status</th>
+        </tr>
 
-<div class="container_12">
-    <div class="grid_12">
+        #if($tag.getStatus().toString() == "PASSED")
+            #set($bgcolour = "#C5D88A")
+        #else
+            #set($bgcolour = "#D88A8A")
+        #end
 
-        <div>
-            <table class="stats-table">
-                <tr>
-                    <th>Tag</th>
-                    <th>Scenarios</th>
-                    <th>Steps</th>
-                    <th style="background-color:#C5D88A;">Passed Scenarios</th>
-                    <th style="background-color:#D88A8A;">Failed Scenarios</th>
-                    <th style="background-color:#C5D88A;">Passed Steps</th>
-                    <th style="background-color:#D88A8A;">Failed Steps</th>
-                    <th style="background-color:#2DEAEC;">Skipped Steps</th>
-                    <th style="background-color:#ebcc81;">Pending Steps</th>
-                    <th>Duration</th>
-                    <th>Status</th>
-                </tr>
+        <tr>
+            <td><a href="${project.getName()}-$tag.getFileName()">$tag.getTagName()</a></td>
+            <td>$tag.getNumberOfScenarios()</td>
+            <td>$tag.getNumberOfSteps()</td>
+            <td>$tag.getNumberOfScenariosPassed()</td>
+            <td>$tag.getNumberOfScenariosFailed()</td>
+            <td>$tag.getNumberOfStepsPassed()</td>
+            <td>$tag.getNumberOfStepsFailed()</td>
+            <td>$tag.getNumberOfStepsSkipped()</td>
+            <td>$tag.getNumberOfStepsPending()</td>
+            <td>$tag.getFormattedDuration()</td>
+            <td style="background-color: $bgcolour;">$tag.getStatus()</td>
+        </tr>
 
-                #if($tag.getStatus().toString() == "PASSED")
-                    #set($bgcolour = "#C5D88A")
-                #else
-                    #set($bgcolour = "#D88A8A")
-                #end
+    </table>
 
-                <tr>
-                    <td><a href="${project.getName()}-$tag.getFileName()">$tag.getTagName()</a></td>
-                    <td>$tag.getNumberOfScenarios()</td>
-                    <td>$tag.getNumberOfSteps()</td>
-                    <td>$tag.getNumberOfScenariosPassed()</td>
-                    <td>$tag.getNumberOfScenariosFailed()</td>
-                    <td>$tag.getNumberOfStepsPassed()</td>
-                    <td>$tag.getNumberOfStepsFailed()</td>
-                    <td>$tag.getNumberOfStepsSkipped()</td>
-                    <td>$tag.getNumberOfStepsPending()</td>
-                    <td>$tag.getFormattedDuration()</td>
-                    <td style="background-color: $bgcolour;">$tag.getStatus()</td>
-                </tr>
+</div>
 
-            </table>
-
-        </div>
-
-        <div style="color:black;">
-            #foreach($scenario in $tag.getScenarios())
-                #if (!$scenario.getScenario().isOutline())
+<p></p>
+<div class="scenarioTable">
+    <div style="color:black;">
+        #foreach($scenario in $tag.getScenarios())
+            #if (!$scenario.getScenario().isOutline())
                 <div style="margin-bottom:20px;padding:15px;">
                     <div><a href="${project.getName()}-$scenario.getParentFeatureUri()">View Feature File</a></div>
                     $scenario.getScenario().getName()
@@ -233,17 +230,10 @@
                         #end
                     #end
                 </div>
-                #end
             #end
-        </div>
+        #end
+        <p style="text-align:right;">Created at $time_stamp</p>
     </div>
-
-
-    <div class="container_12">
-        <div class="grid_12 hr"></div>
-        <div class="grid_12 footer">
-            <p style="text-align:right;">Created at $time_stamp</p>
-        </div>
-    </div>
-    <div class="clear"></div>
+</div>
+<div class="clear"></div>
 </body>

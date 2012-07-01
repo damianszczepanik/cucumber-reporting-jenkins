@@ -3,12 +3,13 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Cucumber-JVM Html Reports - Tag Overview</title>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css" media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css" media="screen"/>
-    <link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/table.css" type="text/css" media="screen"/>
+    <link rel="shortcut icon" href="favicon.ico"/>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
         google.load("visualization", "1", {packages:["corechart"]});
@@ -18,13 +19,15 @@
             var stepsData = google.visualization.arrayToDataTable([
                 ["Tags", "Passed", "Failed", "Skipped", "Pending"]
                 #foreach($tagRow in $tagStepsData)
-                    ,['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2), $tagRow.get(3), $tagRow.get(4)]
+                    ,
+                    ['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2), $tagRow.get(3), $tagRow.get(4)]
                 #end
             ]);
             var scenariosData = google.visualization.arrayToDataTable([
                 ["Tags", "Passed", "Failed"]
                 #foreach($tagRow in $tagScenariosData)
-                    ,['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2)]
+                    ,
+                    ['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2)]
                 #end
             ]);
 
@@ -40,15 +43,15 @@
                     }
             );
 
-            new google.visualization.ColumnChart(document.getElementById('tagsOverviewStepsChart')).
-                    draw(stepsData,
-                    {title:"Tag overview by Steps",
-                        isStacked:true,
-                        colors:['green', 'red', 'blue', 'orange'],
-                        height:400,
-                        vAxis:{title:"Steps"},
-                        hAxis:{title:"Tags"}}
-            );
+//            new google.visualization.ColumnChart(document.getElementById('tagsOverviewStepsChart')).
+//                    draw(stepsData,
+//                    {title:"Tag overview by Steps",
+//                        isStacked:true,
+//                        colors:['green', 'red', 'blue', 'orange'],
+//                        height:400,
+//                        vAxis:{title:"Steps"},
+//                        hAxis:{title:"Tags"}}
+//            );
         }
     </script>
     <style>
@@ -165,101 +168,73 @@
         </div>
     </div>
 </div>
-<div id="fullwidth_gradient">
-    <div class="container_12">
-        <div class="grid_9 heading">
-            <h2>Tag Overview#if ($build_number) for Build: $build_number#end</h2>
-            <span class="subhead">The following graph shows number of steps passing, failing and skipped for this build:</span>
-        </div>
+<div id="fullwidth_gradient" class="pageHeader">
+    <div class="pageHeaderText">
+        <h2>Tag Overview#if ($build_number) for Build: $build_number#end</h2>
     </div>
 </div>
-
-<div class="container_12">
-<div class="grid_12">
-
     #if($tags.isEmpty())
-        <div><p>You have no tags in your cucumber features</p></div>
+    <div><p>You have no tags in your cucumber features</p></div>
     #else
+    <div id="tagsOverviewScenariosChart" class="tagOverviewChart"></div>
+    <div class="statsTable">
+        <h2>Tag Statistics</h2>
+        <table class="bordered">
+            <tr>
+                <th>Tag</th>
+                <th>Scenarios</th>
+                <th>Steps</th>
+                <th>Passed Scenarios</th>
+                <th>Failed Scenarios</th>
+                <th>Passed Steps</th>
+                <th>Failed Steps</th>
+                <th>Skipped Steps</th>
+                <th>Pending Steps</th>
+                <th>Duration</th>
+                <th>Status</th>
+            </tr>
 
-        <div style="text-align:center;">
-            <div id="tagsOverviewScenariosChart"></div>
-            <div id="tagsOverviewStepsChart"></div>
-        </div>
-        <br/>
+            #foreach($tag in $tags)
 
-        <div class="grid_12"></div>
-
-        <div>
-            <br/>
-
-            <h2>Tag Statistics</h2>
-            <table class="stats-table">
-                <tr>
-                    <th>Tag</th>
-                    <th>Scenarios</th>
-                    <th>Steps</th>
-                    <th>Passed Scenarios</th>
-                    <th>Failed Scenarios</th>
-                    <th>Passed Steps</th>
-                    <th>Failed Steps</th>
-                    <th>Skipped Steps</th>
-                    <th>Pending Steps</th>
-                    <th>Duration</th>
-                    <th>Status</th>
-                </tr>
-
-
-
-                #foreach($tag in $tags)
-
-                    #if($tag.getStatus().toString() == "PASSED")
-                        #set($bgcolour = "#C5D88A")
-                    #else
-                        #set($bgcolour = "#D88A8A")
-                    #end
-
-                    <tr>
-                        <td style="text-align:left;"><a href="${project.getName()}-$tag.getFileName()">$tag.getTagName()</a></td>
-                        <td>$tag.getNumberOfScenarios()</td>
-                        <td>$tag.getNumberOfSteps()</td>
-                        <td>$tag.getNumberOfScenariosPassed()</td>
-                        <td>$tag.getNumberOfScenariosFailed()</td>
-                        <td>$tag.getNumberOfStepsPassed()</td>
-                        <td>$tag.getNumberOfStepsFailed()</td>
-                        <td>$tag.getNumberOfStepsSkipped()</td>
-                        <td>$tag.getNumberOfStepsPending()</td>
-                        <td>$tag.getFormattedDuration()</td>
-                        <td style="background-color: $bgcolour;">$tag.getStatus()</td>
-                    </tr>
+                #if($tag.getStatus().toString() == "PASSED")
+                    #set($bgcolour = "#C5D88A")
+                #else
+                    #set($bgcolour = "#D88A8A")
                 #end
 
-                <tr>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_tags</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_scenarios</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_scenario_fails</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_pending</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
-                    <td style="background-color:lightgray;font-weight:bold;">Totals</td>
+                <tr onclick="window.location = '${project.getName()}-${tag.getFileName()}'">
+                    <td style="text-align:left;"><a
+                            href="${project.getName()}-${tag.getFileName()}">${tag.getTagName()}</a></td>
+                    <td>$tag.getNumberOfScenarios()</td>
+                    <td>$tag.getNumberOfSteps()</td>
+                    <td>$tag.getNumberOfScenariosPassed()</td>
+                    <td>$tag.getNumberOfScenariosFailed()</td>
+                    <td>$tag.getNumberOfStepsPassed()</td>
+                    <td>$tag.getNumberOfStepsFailed()</td>
+                    <td>$tag.getNumberOfStepsSkipped()</td>
+                    <td>$tag.getNumberOfStepsPending()</td>
+                    <td>$tag.getFormattedDuration()</td>
+                    <td style="background-color: $bgcolour;">$tag.getStatus()</td>
                 </tr>
-            </table>
-        </div>
+            #end
 
-    </div>
-    </div>
-
-    #end
-
-<div class="container_12">
-    <div class="grid_12 hr"></div>
-    <div class="grid_12 footer">
+            <tr>
+                <td style="background-color:lightgray;font-weight:bold;">$total_tags</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_scenarios</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_scenario_fails</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_pending</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
+                <td style="background-color:lightgray;font-weight:bold;">Totals</td>
+            </tr>
+        </table>
         <p style="text-align:right;">Created at $time_stamp</p>
     </div>
-</div>
+    #end
 <div class="clear"></div>
 </body>
 </html>

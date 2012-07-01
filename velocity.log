@@ -1,29 +1,29 @@
-Wed Jun 27 23:21:36 PDT 2012  [debug] AvalonLogChute initialized using file 'velocity.log'
-Wed Jun 27 23:21:36 PDT 2012  [trace] *******************************************************************
-Wed Jun 27 23:21:36 PDT 2012  [debug] Starting Jakarta Velocity v1.5-SNAPSHOT (compiled: 2006-07-21 06:25:35)
-Wed Jun 27 23:21:36 PDT 2012  [trace] RuntimeInstance initializing.
-Wed Jun 27 23:21:36 PDT 2012  [debug] Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
-Wed Jun 27 23:21:36 PDT 2012  [debug] Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
-Wed Jun 27 23:21:36 PDT 2012  [debug] Using logger class org.apache.velocity.runtime.log.AvalonLogChute
-Wed Jun 27 23:21:36 PDT 2012  [debug] Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
-Wed Jun 27 23:21:36 PDT 2012  [debug] ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-Wed Jun 27 23:21:36 PDT 2012  [trace] ClasspathResourceLoader : initialization complete.
-Wed Jun 27 23:21:36 PDT 2012  [debug] ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
-Wed Jun 27 23:21:36 PDT 2012  [trace] Default ResourceManager initialization complete.
-Wed Jun 27 23:21:36 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Literal
-Wed Jun 27 23:21:36 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Macro
-Wed Jun 27 23:21:36 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Parse
-Wed Jun 27 23:21:36 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Include
-Wed Jun 27 23:21:36 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
-Wed Jun 27 23:21:36 PDT 2012  [debug] Created '20' parsers.
-Wed Jun 27 23:21:36 PDT 2012  [trace] Velocimacro : initialization starting.
-Wed Jun 27 23:21:36 PDT 2012  [debug] Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
-Wed Jun 27 23:21:36 PDT 2012  [debug] Velocimacro : Default library not found.
-Wed Jun 27 23:21:36 PDT 2012  [debug] Velocimacro : allowInline = true : VMs can be defined inline in templates
-Wed Jun 27 23:21:36 PDT 2012  [debug] Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
-Wed Jun 27 23:21:36 PDT 2012  [debug] Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
-Wed Jun 27 23:21:36 PDT 2012  [debug] Velocimacro : autoload off : VM system will not automatically reload global library macros
-Wed Jun 27 23:21:36 PDT 2012  [trace] Velocimacro : initialization complete.
-Wed Jun 27 23:21:36 PDT 2012  [trace] RuntimeInstance successfully initialized.
-Wed Jun 27 23:21:37 PDT 2012  [debug] ResourceManager : found templates/tagReport.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
-Wed Jun 27 23:21:37 PDT 2012   [info] Null reference [template 'templates/tagReport.vm', line 165, column 92] : $build_number cannot be resolved.
+Sun Jul 01 09:58:56 PDT 2012  [debug] AvalonLogChute initialized using file 'velocity.log'
+Sun Jul 01 09:58:56 PDT 2012  [trace] *******************************************************************
+Sun Jul 01 09:58:56 PDT 2012  [debug] Starting Jakarta Velocity v1.5-SNAPSHOT (compiled: 2006-07-21 06:25:35)
+Sun Jul 01 09:58:56 PDT 2012  [trace] RuntimeInstance initializing.
+Sun Jul 01 09:58:56 PDT 2012  [debug] Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+Sun Jul 01 09:58:56 PDT 2012  [debug] Trying to use logger class org.apache.velocity.runtime.log.AvalonLogChute
+Sun Jul 01 09:58:56 PDT 2012  [debug] Using logger class org.apache.velocity.runtime.log.AvalonLogChute
+Sun Jul 01 09:58:56 PDT 2012  [debug] Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+Sun Jul 01 09:58:56 PDT 2012  [debug] ResourceLoader instantiated: org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Sun Jul 01 09:58:56 PDT 2012  [trace] ClasspathResourceLoader : initialization complete.
+Sun Jul 01 09:58:56 PDT 2012  [debug] ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+Sun Jul 01 09:58:56 PDT 2012  [trace] Default ResourceManager initialization complete.
+Sun Jul 01 09:58:56 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+Sun Jul 01 09:58:56 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+Sun Jul 01 09:58:56 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+Sun Jul 01 09:58:56 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Include
+Sun Jul 01 09:58:56 PDT 2012  [debug] Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+Sun Jul 01 09:58:56 PDT 2012  [debug] Created '20' parsers.
+Sun Jul 01 09:58:56 PDT 2012  [trace] Velocimacro : initialization starting.
+Sun Jul 01 09:58:56 PDT 2012  [debug] Velocimacro : "velocimacro.library" is not set.  Trying default library: VM_global_library.vm
+Sun Jul 01 09:58:56 PDT 2012  [debug] Velocimacro : Default library not found.
+Sun Jul 01 09:58:56 PDT 2012  [debug] Velocimacro : allowInline = true : VMs can be defined inline in templates
+Sun Jul 01 09:58:56 PDT 2012  [debug] Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+Sun Jul 01 09:58:56 PDT 2012  [debug] Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+Sun Jul 01 09:58:56 PDT 2012  [debug] Velocimacro : autoload off : VM system will not automatically reload global library macros
+Sun Jul 01 09:58:56 PDT 2012  [trace] Velocimacro : initialization complete.
+Sun Jul 01 09:58:56 PDT 2012  [trace] RuntimeInstance successfully initialized.
+Sun Jul 01 09:58:56 PDT 2012  [debug] ResourceManager : found templates/tagReport.vm with loader org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+Sun Jul 01 09:58:56 PDT 2012   [info] Null reference [template 'templates/tagReport.vm', line 165, column 88] : $build_number cannot be resolved.

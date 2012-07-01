@@ -1,7 +1,8 @@
 # Publish pretty [cucumber-jvm](https://github.com/cucumber/cucumber-jvm) reports on [Jenkins](http://jenkins-ci.org/)
 
-This is a Java Jenkins plugin which publishes pretty html reports showing the results of cucumber-jvm runs. It also works for the ruby versions of cucumber - not just the cucumber-jvm. To use with regular cucumber just make sure to run cucumber like this: cucumber --format json -o cucumber.json
+This is a fork of masterthoughts jenkins cucumber plugin.
 
+This is a Java Jenkins plugin which publishes pretty html reports showing the results of cucumber-jvm runs. It also works for the ruby versions of cucumber - not just the cucumber-jvm. To use with regular cucumber just make sure to run cucumber like this: cucumber --format json -o cucumber.json
 
 ## Background
 
@@ -108,6 +109,14 @@ Make sure you have configured cucumber-jvm to run with the JUnit runner and to g
     @Cucumber.Options(format = {"json:target/cucumber.json"})
     public class ATMTest {
     }
+
+## Differences from masterthought's plugin
+
+* Support at the project level for each json file passed to the plugin
+* Fixed bugs related to counting empty Scenario Outline as a valid scenario
+* Background is not counted as a seperate scenario, although it's steps are still counted.
+* Uses google charts api instead of flash for the charts. This may switch to D3/Raphael soon. 
+* Various bug fixes
 
 ## Develop
 
