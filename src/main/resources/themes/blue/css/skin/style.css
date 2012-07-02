@@ -175,7 +175,7 @@ a.btn-big:hover span {
     margin-left: auto;
     margin-right: auto;
     max-width: 850px;
-    text-align: center;
+    min-height: 350px;
     width: 95%;
 }
 

@@ -101,8 +101,8 @@ public class CucumberReportPublisher extends Recorder {
                 featureReportGenerator.generateReports();
                 buildResult = featureReportGenerator.getBuildStatus();
             } catch (Exception e) {
-                listener.getLogger().println("Error in Feature ReportGenerator: "+ e.getMessage()+"\n"+ Arrays.toString(e.getStackTrace()));
-                e.printStackTrace();
+                listener.getLogger().println("Error in Feature ReportGenerator: ");
+                e.printStackTrace(listener.getLogger());
             }
         } else {
             listener.getLogger().println("[CucumberReportPublisher] there were no json results found in: " + targetBuildDirectory);

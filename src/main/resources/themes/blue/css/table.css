@@ -31,11 +31,17 @@ table {
     transition: all 0.1s ease-in-out;
 }
 
-.bordered td, .bordered th {
+.bordered th {
     border-left: 1px solid #ccc;
     border-top: 1px solid #ccc;
     padding: 10px;
     text-align: left;
+}
+.bordered td {
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
 }
 
 .bordered th {

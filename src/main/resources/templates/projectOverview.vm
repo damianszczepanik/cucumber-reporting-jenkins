@@ -15,54 +15,54 @@
     <script src="js/g.pie-min.js"></script>
     <link rel="shortcut icon" href="favicon.ico"/>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-##    <script type="text/javascript">
-##        google.load("visualization", "1", {packages:["corechart"]});
-##        google.setOnLoadCallback(drawCharts);
-##        function drawCharts() {
-##            var scenariosData = google.visualization.arrayToDataTable([
-##                ['Scenarios', 'Status of Scenarios'],
-##                ['Passed',     ${total_scenario_passes}],
-##                ['Failed',      ${total_scenario_fails}]
-##            ]);
-##
-##            var scenariosOptions = {
-##                title:'Scenarios Overview',
-##                is3D:true,
-##                colors:['green', 'red', 'blue'],
-##                chartArea:{height:225}
-##            };
-##
-##            var scenariosChart = new google.visualization.PieChart(document.getElementById('scenarios_results_chart'))
-##                    .draw(scenariosData, scenariosOptions);
-##        }
-##
-##    </script>
-    <script>
-        window.onload = function () {
-            var r = Raphael('scenarios_results_chart'),
-                    pie = r.piechart(320, 240, 100, [${total_scenario_passes}, ${total_scenario_fails}],
-                            { legend: ["%%.%% - Passed", "Failed"], legendpos: "west", href: ["http://raphaeljs.com", "http://g.raphaeljs.com"]});
+    <script type="text/javascript">
+        google.load("visualization", "1", {packages:["corechart"]});
+        google.setOnLoadCallback(drawCharts);
+        function drawCharts() {
+            var scenariosData = google.visualization.arrayToDataTable([
+                ['Scenarios', 'Status of Scenarios'],
+                ['Passed',     ${total_scenario_passes}],
+                ['Failed',      ${total_scenario_fails}]
+            ]);
 
-            r.text(320, 100, "Scenarios overview for all projects").attr({ font: "20px sans-serif" });
-            pie.hover(function () {
-                this.sector.stop();
-                this.sector.scale(1.1, 1.1, this.cx, this.cy);
+            var scenariosOptions = {
+                title:'Scenarios Overview',
+                is3D:true,
+                colors:['green', 'red', 'blue'],
+                chartArea:{height:225}
+            };
 
-                if (this.label) {
-                    this.label[0].stop();
-                    this.label[0].attr({ r: 7.5 });
-                    this.label[1].attr({ "font-weight": 800 });
-                }
-            }, function () {
-                this.sector.animate({ transform: 's1 1 ' + this.cx + ' ' + this.cy }, 500, "bounce");
+            var scenariosChart = new google.visualization.PieChart(document.getElementById('scenarios_results_chart'))
+                    .draw(scenariosData, scenariosOptions);
+        }
 
-                if (this.label) {
-                    this.label[0].animate({ r: 5 }, 500, "bounce");
-                    this.label[1].attr({ "font-weight": 400 });
-                }
-            });
-        };
     </script>
+##    <script>
+##        window.onload = function () {
+##            var r = Raphael('scenarios_results_chart'),
+##                    pie = r.piechart(320, 240, 100, [${total_scenario_passes}, ${total_scenario_fails}],
+##                            { legend: ["Passed", "Failed"], legendpos: "west"});
+##
+##            r.text(320, 100, "Scenarios overview for all projects").attr({ font: "20px sans-serif" });
+##            pie.hover(function () {
+##                this.sector.stop();
+##                this.sector.scale(1.1, 1.1, this.cx, this.cy);
+##
+##                if (this.label) {
+##                    this.label[0].stop();
+##                    this.label[0].attr({ r: 7.5 });
+##                    this.label[1].attr({ "font-weight": 800 });
+##                }
+##            }, function () {
+##                this.sector.animate({ transform: 's1 1 ' + this.cx + ' ' + this.cy }, 500, "bounce");
+##
+##                if (this.label) {
+##                    this.label[0].animate({ r: 5 }, 500, "bounce");
+##                    this.label[1].attr({ "font-weight": 400 });
+##                }
+##            });
+##        };
+##    </script>
     <link rel="shortcut icon" href="favicon.ico"/>
 </head>
 <body id="top">

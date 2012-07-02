@@ -10,50 +10,55 @@
     <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
     <link rel="stylesheet" href="css/table.css" type="text/css" media="screen"/>
     <link rel="shortcut icon" href="favicon.ico"/>
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
-        google.load("visualization", "1", {packages:["corechart"]});
-        google.setOnLoadCallback(drawCharts);
-        function drawCharts() {
-            // Create and populate the data table.
-            var stepsData = google.visualization.arrayToDataTable([
-                ["Tags", "Passed", "Failed", "Skipped", "Pending"]
-                #foreach($tagRow in $tagStepsData)
-                    ,
-                    ['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2), $tagRow.get(3), $tagRow.get(4)]
-                #end
-            ]);
-            var scenariosData = google.visualization.arrayToDataTable([
-                ["Tags", "Passed", "Failed"]
-                #foreach($tagRow in $tagScenariosData)
-                    ,
-                    ['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2)]
-                #end
-            ]);
-
-            // Create and draw the visualization.
-            new google.visualization.ColumnChart(document.getElementById('tagsOverviewScenariosChart')).
-                    draw(scenariosData,
-                    {title:"Tag overview by Scenario",
-                        isStacked:true,
-                        colors:['green', 'red', 'blue', 'orange'],
-                        height:400,
-                        vAxis:{title:"Scenarios"},
-                        hAxis:{title:"Tags"}
-                    }
-            );
-
-//            new google.visualization.ColumnChart(document.getElementById('tagsOverviewStepsChart')).
-//                    draw(stepsData,
-//                    {title:"Tag overview by Steps",
-//                        isStacked:true,
-//                        colors:['green', 'red', 'blue', 'orange'],
-//                        height:400,
-//                        vAxis:{title:"Steps"},
-//                        hAxis:{title:"Tags"}}
-//            );
-        }
-    </script>
+##    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/d3.v2.min.js"></script>
+    <link href='css/stack.css' rel='stylesheet' type='text/css'/>
+    <link href='css/button.css' rel='stylesheet' type='text/css'/>
+    <script src='js/stream_layers.js' type='text/javascript'></script>
+    <script src='js/stack.js' type='text/javascript'></script>
+##        google.load("visualization", "1", {packages:["corechart"]});
+##        google.setOnLoadCallback(drawCharts);
+##        function drawCharts() {
+##            // Create and populate the data table.
+##            var stepsData = google.visualization.arrayToDataTable([
+##                ["Tags", "Passed", "Failed", "Skipped", "Pending"]
+##                #foreach($tagRow in $tagStepsData)
+##                    ,
+##                    ['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2), $tagRow.get(3), $tagRow.get(4)]
+##                #end
+##            ]);
+##            var scenariosData = google.visualization.arrayToDataTable([
+##                ["Tags", "Passed", "Failed"]
+##                #foreach($tagRow in $tagScenariosData)
+##                    ,
+##                    ['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2)]
+##                #end
+##            ]);
+##
+##            // Create and draw the visualization.
+##            new google.visualization.ColumnChart(document.getElementById('tagsOverviewScenariosChart')).
+##                    draw(scenariosData,
+##                    {title:"Tag overview by Scenario",
+##                        isStacked:true,
+##                        colors:['green', 'red', 'blue', 'orange'],
+##                        height:400,
+##                        vAxis:{title:"Scenarios"},
+##                        hAxis:{title:"Tags"}
+##                    }
+##            );
+##
+##//            new google.visualization.ColumnChart(document.getElementById('tagsOverviewStepsChart')).
+##//                    draw(stepsData,
+##//                    {title:"Tag overview by Steps",
+##//                        isStacked:true,
+##//                        colors:['green', 'red', 'blue', 'orange'],
+##//                        height:400,
+##//                        vAxis:{title:"Steps"},
+##//                        hAxis:{title:"Tags"}}
+##//            );
+##        }
+##    </script>
     <style>
         .feature-keyword {
             font-weight: bold;
@@ -176,7 +181,33 @@
     #if($tags.isEmpty())
     <div><p>You have no tags in your cucumber features</p></div>
     #else
-    <div id="tagsOverviewScenariosChart" class="tagOverviewChart"></div>
+    <div id="tagsOverviewScenariosChart" class="tagOverviewChart">
+        <button class='first' id='group'
+                onclick='if (!($("#group").hasClass("first active"))) {$("#group").attr("class", "first active"); $("#stack").attr("class", "last"); barChart.transitionGroup();}'>
+            Group
+        </button>
+        <button class='last active' id='stack'
+                onclick='if (!($("#stack").hasClass("last active"))) {$("#group").attr("class", "first"); $("#stack").attr("class", "last active");  barChart.transitionStack();}'>
+            Stack
+        </button>
+        <div style="text-align: center; " class='gallery' id='chart'>
+            <script>barChart.createBarChart('chart', $('#tagsOverviewScenariosChart'),
+                    [
+                        [
+                            #foreach($tagRow in $tagScenariosData)
+                                {x: $tagRow.get(0), y:$tagRow.get(2), label:"$tagRow.get(1)"},
+                            #end
+                        ],
+                        [
+                            #foreach($tagRow in $tagScenariosData)
+                                {x: $tagRow.get(0), y:$tagRow.get(3), label:"$tagRow.get(1)"},
+                            #end
+                        ]
+                    ], 2, $numberOfTags)</script>
+            <p/>
+        </div>
+    </div>
+
     <div class="statsTable">
         <h2>Tag Statistics</h2>
         <table class="bordered">
@@ -219,7 +250,7 @@
             #end
 
             <tr>
-                <td style="background-color:lightgray;font-weight:bold;">$total_tags</td>
+                <td style="background-color:lightgray;font-weight:bold; text-align: center;">$total_tags</td>
                 <td style="background-color:lightgray;font-weight:bold;">$total_scenarios</td>
                 <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
                 <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>

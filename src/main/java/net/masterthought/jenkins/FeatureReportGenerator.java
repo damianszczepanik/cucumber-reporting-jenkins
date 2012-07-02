@@ -8,6 +8,7 @@ import net.masterthought.jenkins.json.Util;
 import org.apache.commons.io.FileUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.io.File;
@@ -48,7 +49,11 @@ public class FeatureReportGenerator {
                                   PrintStream logger) throws IOException {
         ConfigurationOptions.setSkippedFailsBuild(skippedFails);
         ConfigurationOptions.setUndefinedFailsBuild(undefinedFails);
-        FeatureReportGenerator.log = logger;
+        if (logger == null) {
+            log = System.out;
+        } else {
+            FeatureReportGenerator.log = logger;
+        }
 
         this.buildNumber = buildNumber;
         this.buildProject = buildProject;
@@ -68,9 +73,11 @@ public class FeatureReportGenerator {
             log.println("Copying resources from \"" + FeatureReportGenerator.class.getResource("/themes/blue").toURI() + "\"to " + reportDirectory.getAbsolutePath());
             FileUtils.copyDirectory(new File(FeatureReportGenerator.class.getResource("/themes/blue").toURI()), reportDirectory);
         } catch (IOException e) {
-            log.println("Exception in copyResource: " + e.getMessage() + "\n\t" + Arrays.toString(e.getStackTrace()));
+            log.println("Exception in copyResource: ");
+            e.printStackTrace(log);
         } catch (URISyntaxException e) {
-            log.println("Exception in copyResource: " + e.getMessage() + "\n\t" + Arrays.toString(e.getStackTrace()));
+            log.println("Exception in copyResource: ");
+            e.printStackTrace(log);
         }
     }
 
@@ -259,8 +266,9 @@ public class FeatureReportGenerator {
         context.put("total_scenario_passes", project.getNumberOfScenariosPassed());
         context.put("total_scenario_fails", project.getNumberOfScenariosFailed());
         context.put("total_duration", project.getFormattedDuration());
-        context.put("tagScenariosData", generateTagOverviewChartScenariosData(project));
-        context.put("tagStepsData", generateTagOverviewChartStepsData(project));
+        List<List<Object>> scenarioData = generateTagOverviewChartScenariosData(project);
+        context.put("tagScenariosData", scenarioData);
+        context.put("numberOfTags", scenarioData.size());
         context.put("time_stamp", timeStamp());
         context.put("jenkins_base", pluginUrlPath);
         generateReport(project.getProjectTagUri(), featureOverview, context);
@@ -274,15 +282,18 @@ public class FeatureReportGenerator {
     }
 
 
-    private List<List<String>> generateTagOverviewChartScenariosData(Project project) {
-        List<List<String>> tagOverviewData = new ArrayList<List<String>>();
-        List<String> row;
+    private List<List<Object>> generateTagOverviewChartScenariosData(Project project) {
+        List<List<Object>> tagOverviewData = new ArrayList<List<Object>>();
+        List<Object> row;
+        int i = 0;
         for (TagObject tagObject : project.getTags()) {
-            row = new ArrayList<String>(3);
+            row = new ArrayList<Object>(4);
+            row.add(i);
             row.add(tagObject.getTagName());
-            row.add(Integer.toString(tagObject.getNumberOfScenariosPassed()));
-            row.add(Integer.toString(tagObject.getNumberOfScenariosFailed()));
+            row.add(tagObject.getNumberOfScenariosPassed());
+            row.add(tagObject.getNumberOfScenariosFailed());
             tagOverviewData.add(row);
+            i++;
         }
         return tagOverviewData;
     }
@@ -367,6 +378,7 @@ public class FeatureReportGenerator {
         Properties props = new Properties();
         props.setProperty("resource.loader", "class");
         props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
         return props;
     }
 
