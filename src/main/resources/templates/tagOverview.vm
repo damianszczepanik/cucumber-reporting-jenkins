@@ -10,129 +10,13 @@
     <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
     <link rel="stylesheet" href="css/table.css" type="text/css" media="screen"/>
     <link rel="shortcut icon" href="favicon.ico"/>
-##    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="js/d3.v2.min.js"></script>
     <link href='css/stack.css' rel='stylesheet' type='text/css'/>
     <link href='css/button.css' rel='stylesheet' type='text/css'/>
     <script src='js/stream_layers.js' type='text/javascript'></script>
     <script src='js/stack.js' type='text/javascript'></script>
-##        google.load("visualization", "1", {packages:["corechart"]});
-##        google.setOnLoadCallback(drawCharts);
-##        function drawCharts() {
-##            // Create and populate the data table.
-##            var stepsData = google.visualization.arrayToDataTable([
-##                ["Tags", "Passed", "Failed", "Skipped", "Pending"]
-##                #foreach($tagRow in $tagStepsData)
-##                    ,
-##                    ['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2), $tagRow.get(3), $tagRow.get(4)]
-##                #end
-##            ]);
-##            var scenariosData = google.visualization.arrayToDataTable([
-##                ["Tags", "Passed", "Failed"]
-##                #foreach($tagRow in $tagScenariosData)
-##                    ,
-##                    ['$tagRow.get(0)', $tagRow.get(1), $tagRow.get(2)]
-##                #end
-##            ]);
-##
-##            // Create and draw the visualization.
-##            new google.visualization.ColumnChart(document.getElementById('tagsOverviewScenariosChart')).
-##                    draw(scenariosData,
-##                    {title:"Tag overview by Scenario",
-##                        isStacked:true,
-##                        colors:['green', 'red', 'blue', 'orange'],
-##                        height:400,
-##                        vAxis:{title:"Scenarios"},
-##                        hAxis:{title:"Tags"}
-##                    }
-##            );
-##
-##//            new google.visualization.ColumnChart(document.getElementById('tagsOverviewStepsChart')).
-##//                    draw(stepsData,
-##//                    {title:"Tag overview by Steps",
-##//                        isStacked:true,
-##//                        colors:['green', 'red', 'blue', 'orange'],
-##//                        height:400,
-##//                        vAxis:{title:"Steps"},
-##//                        hAxis:{title:"Tags"}}
-##//            );
-##        }
-##    </script>
     <style>
-        .feature-keyword {
-            font-weight: bold;
-        }
-
-        .feature-description {
-            padding-left: 15px;
-            font-style: italic;
-            background-color: beige;
-        }
-
-        .feature-role {
-            font-weight: bold;
-        }
-
-        .feature-action {
-            font-weight: bold;
-        }
-
-        .feature-value {
-            font-weight: bold;
-        }
-
-        .feature-tags {
-            padding-top: 10px;
-            padding-left: 15px;
-            color: darkblue;
-        }
-
-        .scenario-keyword {
-            font-weight: bold;
-            padding-left: 15px;
-        }
-
-        .scenario-scenario_name {
-            padding-left: 15px;
-        }
-
-        .step-keyword {
-            font-weight: bold;
-            padding-left: 50px;
-        }
-
-        .step-error-message {
-            background-color: #FFEEEE;
-            padding-left: 50px;
-            border: 1px solid #D88A8A;
-        }
-
-        .passed {
-            background-color: #C5D88A;
-        }
-
-        .failed {
-            background-color: #D88A8A;
-        }
-
-        .skipped {
-            background-color: #2DEAEC;
-        }
-
-        .undefined {
-            background-color: #ebcc81;
-        }
-
-        table.stats-table {
-            color: black;
-            border-width: 1px;
-            border-spacing: 2px;
-            border-style: outset;
-            border-color: gray;
-            border-collapse: collapse;
-            background-color: white;
-        }
 
         table.stats-table th {
             color: black;

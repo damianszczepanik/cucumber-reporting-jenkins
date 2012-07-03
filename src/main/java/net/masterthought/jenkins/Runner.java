@@ -1,23 +1,13 @@
 package net.masterthought.jenkins;
 
-
-import net.masterthought.jenkins.util.UnzipUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Runner {
 
     public static void main(String[] args) throws Exception {
-        File rd = new File("/Users/Shared/Jenkins/Home/jobs/Api\\ Transfer/builds/13/cucumber-html-reports/");
+        File rd = new File("/Users/Shared/Jenkins/Home/jobs/Api Transfer/builds/13/cucumber-html-reports/");
         List<String> list = new ArrayList<String>();
 //        list.add("/Users/kings/.jenkins/jobs/cucumber-jvm/builds/7/cucumber-html-reports/cukes.json");
 //        list.add("/Users/dpayne2/Workspace/api/api-transfer/target/cucumber.json");
