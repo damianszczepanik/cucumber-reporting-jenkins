@@ -4,7 +4,6 @@ import net.masterthought.jenkins.ScenarioTag;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang.time.DurationFormatUtils;
 
 public class Util {
 
@@ -62,25 +62,16 @@ public class Util {
 
     public static boolean hasSteps(Element element) {
         boolean result = element.getSteps() == null || element.getSteps().length == 0;
-        if(result){
-            System.out.println("[WARNING] scenario has no steps:  " + element.getName());
-        }
         return !result;
     }
 
     public static boolean hasSteps(ScenarioTag scenario) {
         boolean result = scenario.getScenario().getSteps() == null || scenario.getScenario().getSteps().length == 0;
-        if(result){
-            System.out.println("[WARNING] scenario tag has no steps:  " + scenario.getScenario().getName());
-        }
         return !result;
     }
 
     public static boolean hasScenarios(Feature feature) {
         boolean result = feature.getElements() == null || feature.getElements().length == 0;
-        if(result){
-            System.out.println("[WARNING] feature has no scenarios:  " + feature.getName());
-        }
         return !result;
     }
 
@@ -116,7 +107,7 @@ public class Util {
     }
 
     public static boolean itemExists(String item) {
-        return !(item.isEmpty() || item == null);
+        return !(item==null || item.isEmpty());
     }
 
     public static int findStatusCount(List<Util.Status> statuses, Status statusToFind) {
@@ -162,7 +153,5 @@ public class Util {
                 .appendSuffix(" ms", " ms")
                 .toFormatter();
         return formatter.print(new Period(0, duration / 1000000));
-
-
     }
 }

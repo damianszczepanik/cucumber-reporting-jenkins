@@ -24,4 +24,12 @@ public class Result {
         return error_message;
     }
 
+    @Override
+    public String toString() {
+        return "Result{" +
+                "status='" + status + '\'' +
+                ", error_message='" + error_message + '\'' +
+                ", duration=" + duration +
+                '}';
+    }
 }

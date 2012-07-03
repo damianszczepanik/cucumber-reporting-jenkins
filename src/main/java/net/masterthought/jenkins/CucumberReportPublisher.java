@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CucumberReportPublisher extends Recorder {
@@ -93,12 +94,15 @@ public class CucumberReportPublisher extends Recorder {
         String[] jsonReportFiles = findJsonFiles(targetBuildDirectory);
         if (jsonReportFiles.length != 0) {
             listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
-            FeatureReportGenerator featureReportGenerator = new FeatureReportGenerator(fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory), targetBuildDirectory, pluginUrlPath, buildNumber, buildProject, skippedFails, undefinedFails);
+            FeatureReportGenerator featureReportGenerator = new FeatureReportGenerator(fullPathToJsonFiles(
+                    jsonReportFiles, targetBuildDirectory), targetBuildDirectory, pluginUrlPath, buildNumber,
+                    buildProject, skippedFails, undefinedFails, listener.getLogger());
             try {
                 featureReportGenerator.generateReports();
                 buildResult = featureReportGenerator.getBuildStatus();
             } catch (Exception e) {
-                e.printStackTrace();
+                listener.getLogger().println("Error in Feature ReportGenerator: ");
+                e.printStackTrace(listener.getLogger());
             }
         } else {
             listener.getLogger().println("[CucumberReportPublisher] there were no json results found in: " + targetBuildDirectory);

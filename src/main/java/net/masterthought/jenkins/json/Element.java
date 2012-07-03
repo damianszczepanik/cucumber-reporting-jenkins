@@ -1,9 +1,9 @@
 package net.masterthought.jenkins.json;
 
-import net.masterthought.jenkins.ConfigurationOptions;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Element {
@@ -13,6 +13,8 @@ public class Element {
     private String keyword;
     private Step[] steps;
     private Tag[] tags;
+    private static final String SCENARIO_OUTLINE_KEYWORD = "Scenario Outline";
+    private static final String BACKGROUND_KEYWORD = "Background";
 
     public Element(String name, String description, String keyword) {
         this.name = name;
@@ -78,5 +80,35 @@ public class Element {
         return result;
     }
 
+    public Tag[] getRawTags() {
+        return tags;
+    }
 
+    public boolean isOutline() {
+        if (!keyword.equals(SCENARIO_OUTLINE_KEYWORD)) {
+            return false;
+        }
+
+        for (Step step : steps) {
+            if (step.getResult() != null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isBackground() {
+        return keyword.equals(BACKGROUND_KEYWORD);
+    }
+
+    @Override
+    public String toString() {
+        return "Element{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", keyword='" + keyword + '\'' +
+                ", steps=" + (steps == null ? null : Arrays.asList(steps)) +
+                ", tags=" + (tags == null ? null : Arrays.asList(tags)) +
+                '}';
+    }
 }

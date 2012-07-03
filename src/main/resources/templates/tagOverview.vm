@@ -1,103 +1,22 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <script language="javascript">AC_FL_RunContent = 0;</script>
-    <script language="javascript"> DetectFlashVer = 0; </script>
-    <script src="${jenkins_base}plugin/cucumber-reports/charts/AC_RunActiveContent.js" language="javascript"></script>
-    <script language="JavaScript" type="text/javascript">
-        <!--
-        var requiredMajorVersion = 10;
-        var requiredMinorVersion = 0;
-        var requiredRevision = 45;
-        -->
-    </script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Cucumber-JVM Html Reports - Tag Overview</title>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/style.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/skin/style.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/960.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/reset.css" type="text/css"
-          media="screen"/>
-    <link rel="stylesheet" href="${jenkins_base}plugin/cucumber-reports/blue/css/text.css" type="text/css"
-          media="screen"/>
-    <link rel="shortcut icon" href="${jenkins_base}plugin/cucumber-reports/blue/favicon.ico"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/skin/style.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/960.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/text.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/table.css" type="text/css" media="screen"/>
+    <link rel="shortcut icon" href="favicon.ico"/>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="js/d3.v2.min.js"></script>
+    <link href='css/stack.css' rel='stylesheet' type='text/css'/>
+    <link href='css/button.css' rel='stylesheet' type='text/css'/>
+    <script src='js/stream_layers.js' type='text/javascript'></script>
+    <script src='js/stack.js' type='text/javascript'></script>
     <style>
-        .feature-keyword {
-            font-weight: bold;
-        }
-
-        .feature-description {
-            padding-left: 15px;
-            font-style: italic;
-            background-color: beige;
-        }
-
-        .feature-role {
-            font-weight: bold;
-        }
-
-        .feature-action {
-            font-weight: bold;
-        }
-
-        .feature-value {
-            font-weight: bold;
-        }
-
-        .feature-tags {
-            padding-top: 10px;
-            padding-left: 15px;
-            color: darkblue;
-        }
-
-        .scenario-keyword {
-            font-weight: bold;
-            padding-left: 15px;
-        }
-
-        .scenario-scenario_name {
-            padding-left: 15px;
-        }
-
-        .step-keyword {
-            font-weight: bold;
-            padding-left: 50px;
-        }
-
-        .step-error-message {
-            background-color: #FFEEEE;
-            padding-left: 50px;
-            border: 1px solid #D88A8A;
-        }
-
-        .passed {
-            background-color: #C5D88A;
-        }
-
-        .failed {
-            background-color: #D88A8A;
-        }
-
-        .skipped {
-            background-color: #2DEAEC;
-        }
-
-        .undefined {
-            background-color: #ebcc81;
-        }
-
-        table.stats-table {
-            color: black;
-            border-width: 1px;
-            border-spacing: 2px;
-            border-style: outset;
-            border-color: gray;
-            border-collapse: collapse;
-            background-color: white;
-        }
 
         table.stats-table th {
             color: black;
@@ -125,143 +44,112 @@
 <body id="top">
 <div id="fullwidth_header">
     <div class="container_12">
-        <h1 class="grid_4 logo"><a href="feature-overview.html" class='ie6fix'>Cucumber</a></h1>
+        <h1 class="grid_4 logo"><a href="project-overview.html" class='ie6fix'>Cucumber</a></h1>
 
         <div class="grid_6" id="nav">
             <ul>
-                <li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
-                <li><a href="feature-overview.html">Feature Overview</a></li>
+                #if ($build_number)
+                    <li><a href="${jenkins_base}job/$build_project/$build_number">Back To Jenkins</a></li>
+                #end
+                <li><a href="project-overview.html">Project Overview</a></li>
+                <li><a href="$project.getProjectFeatureUri()">Feature Overview</a></li>
             </ul>
         </div>
     </div>
 </div>
-<div id="fullwidth_gradient">
-    <div class="container_12">
-        <div class="grid_9 heading">
-            <h2>Tag Overview for Build: $build_number</h2>
-            <span class="subhead">The following graph shows number of steps passing, failing and skipped for this build:</span>
-        </div>
+<div id="fullwidth_gradient" class="pageHeader">
+    <div class="pageHeaderText">
+        <h2>Tag Overview#if ($build_number) for Build: $build_number#end</h2>
     </div>
 </div>
-
-<div class="container_12">
-    <div class="grid_12">
-
-        #if($tags.isEmpty())
-            <div><p>You have no tags in your cucumber features</p></div>
-        #else
-
-        
-        <div style="text-align:center;"><script language="JavaScript" type="text/javascript">
-            <!--
-            if (AC_FL_RunContent == 0 || DetectFlashVer == 0) {
-                alert("This page requires AC_RunActiveContent.js.");
-            } else {
-                var hasRightVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
-                if(hasRightVersion) {
-                    AC_FL_RunContent(
-                            'codebase', 'http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,45,2',
-                            'width', '600',
-                            'height', '350',
-                            'scale', 'noscale',
-                            'salign', 'TL',
-                            'bgcolor', '#777788',
-                            'wmode', 'opaque',
-                            'movie', '${jenkins_base}plugin/cucumber-reports/charts/charts',
-                            'src', '${jenkins_base}plugin/cucumber-reports/charts/charts',
-                            'FlashVars', "library_path=${jenkins_base}plugin/cucumber-reports/charts/charts_library&xml_data=$chart_data",
-                            'id', 'my_chart',
-                            'name', 'my_chart',
-                            'menu', 'true',
-                            'allowFullScreen', 'true',
-                            'allowScriptAccess','sameDomain',
-                            'quality', 'high',
-                            'align', 'middle',
-                            'pluginspage', 'http://www.macromedia.com/go/getflashplayer',
-                            'play', 'true',
-                            'devicefont', 'false'
-                    );
-                } else {
-                    var alternateContent = 'This content requires the Adobe Flash Player. '
-                            + '<u><a href=http://www.macromedia.com/go/getflash/>Get Flash</a></u>.';
-                    document.write(alternateContent);
-                }
-            }
-            // -->
-        </script>
-            <noscript>
-                <P>This content requires JavaScript.</P>
-            </noscript>
+    #if($tags.isEmpty())
+    <div><p>You have no tags in your cucumber features</p></div>
+    #else
+    <div id="tagsOverviewScenariosChart" class="tagOverviewChart">
+        <button class='first' id='group'
+                onclick='if (!($("#group").hasClass("first active"))) {$("#group").attr("class", "first active"); $("#stack").attr("class", "last"); barChart.transitionGroup();}'>
+            Group
+        </button>
+        <button class='last active' id='stack'
+                onclick='if (!($("#stack").hasClass("last active"))) {$("#group").attr("class", "first"); $("#stack").attr("class", "last active");  barChart.transitionStack();}'>
+            Stack
+        </button>
+        <div style="text-align: center; " class='gallery' id='chart'>
+            <script>barChart.createBarChart('chart', $('#tagsOverviewScenariosChart'),
+                    [
+                        [
+                            #foreach($tagRow in $tagScenariosData)
+                                {x: $tagRow.get(0), y:$tagRow.get(2), label:"$tagRow.get(1)"},
+                            #end
+                        ],
+                        [
+                            #foreach($tagRow in $tagScenariosData)
+                                {x: $tagRow.get(0), y:$tagRow.get(3), label:"$tagRow.get(1)"},
+                            #end
+                        ]
+                    ], 2, $numberOfTags)</script>
+            <p/>
         </div>
-        <br/>
+    </div>
 
-        <div class="grid_12 hr"></div>
+    <div class="statsTable">
+        <h2>Tag Statistics</h2>
+        <table class="bordered">
+            <tr>
+                <th>Tag</th>
+                <th>Scenarios</th>
+                <th>Steps</th>
+                <th>Passed Scenarios</th>
+                <th>Failed Scenarios</th>
+                <th>Passed Steps</th>
+                <th>Failed Steps</th>
+                <th>Skipped Steps</th>
+                <th>Pending Steps</th>
+                <th>Duration</th>
+                <th>Status</th>
+            </tr>
 
-        <div>
-            <br/>
+            #foreach($tag in $tags)
 
-            <h2>Tag Statistics</h2>
-            <table class="stats-table">
-                <tr>
-                    <th>Tag</th>
-                    <th>Scenarios</th>
-                    <th>Steps</th>
-                    <th>Passed</th>
-                    <th>Failed</th>
-                    <th>Skipped</th>
-                    <th>Pending</th>
-                    <th>Duration</th>
-                    <th>Status</th>
-                </tr>
-
-
-
-                #foreach($tag in $tags)
-
-                    #if($tag.getStatus().toString() == "PASSED")
-                        #set($bgcolour = "#C5D88A")
-                    #else
-                        #set($bgcolour = "#D88A8A")
-                    #end
-
-                    <tr>
-                        <td style="text-align:left;"><a href="$tag.getFileName()">$tag.getTagName()</a></td>
-                        <td>$tag.getNumberOfScenarios()</td>
-                        <td>$tag.getNumberOfSteps()</td>
-                        <td>$tag.getNumberOfPasses()</td>
-                        <td>$tag.getNumberOfFailures()</td>
-                        <td>$tag.getNumberOfSkipped()</td>
-                        <td>$tag.getNumberOfPending()</td>
-                        <td>$tag.getDurationOfSteps()</td>
-                        <td style="background-color: $bgcolour;">$tag.getRawStatus()</td>
-                    </tr>
+                #if($tag.getStatus().toString() == "PASSED")
+                    #set($bgcolour = "#C5D88A")
+                #else
+                    #set($bgcolour = "#D88A8A")
                 #end
 
-                <tr>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_tags</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_scenarios</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_pending</td>
-                    <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
-                    <td style="background-color:lightgray;font-weight:bold;">Totals</td>
+                <tr onclick="window.location = '${project.getName()}-${tag.getFileName()}'">
+                    <td style="text-align:left;"><a
+                            href="${project.getName()}-${tag.getFileName()}">${tag.getTagName()}</a></td>
+                    <td>$tag.getNumberOfScenarios()</td>
+                    <td>$tag.getNumberOfSteps()</td>
+                    <td>$tag.getNumberOfScenariosPassed()</td>
+                    <td>$tag.getNumberOfScenariosFailed()</td>
+                    <td>$tag.getNumberOfStepsPassed()</td>
+                    <td>$tag.getNumberOfStepsFailed()</td>
+                    <td>$tag.getNumberOfStepsSkipped()</td>
+                    <td>$tag.getNumberOfStepsPending()</td>
+                    <td>$tag.getFormattedDuration()</td>
+                    <td style="background-color: $bgcolour;">$tag.getStatus()</td>
                 </tr>
-            </table>
-        </div>
+            #end
 
+            <tr>
+                <td style="background-color:lightgray;font-weight:bold; text-align: center;">$total_tags</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_scenarios</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_steps</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_scenario_passes</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_scenario_fails</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_passes</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_fails</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_skipped</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_pending</td>
+                <td style="background-color:lightgray;font-weight:bold;">$total_duration</td>
+                <td style="background-color:lightgray;font-weight:bold;">Totals</td>
+            </tr>
+        </table>
+        <p style="text-align:right;">Created at $time_stamp</p>
     </div>
-</div>
-
-        #end
-
-<div class="container_12">
-    <div class="grid_12 hr"></div>
-    <div class="grid_12 footer">
-        <p style="text-align:center;">Cucumber-JVM Jenkins Report Plugin - $time_stamp</p>
-    </div>
-</div>
+    #end
 <div class="clear"></div>
 </body>
 </html>

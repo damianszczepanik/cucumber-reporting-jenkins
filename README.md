@@ -1,7 +1,8 @@
 # Publish pretty [cucumber-jvm](https://github.com/cucumber/cucumber-jvm) reports on [Jenkins](http://jenkins-ci.org/)
 
-This is a Java Jenkins plugin which publishes pretty html reports showing the results of cucumber-jvm runs. It also works for the ruby versions of cucumber - not just the cucumber-jvm. To use with regular cucumber just make sure to run cucumber like this: cucumber --format json -o cucumber.json
+This is a fork of masterthoughts jenkins cucumber plugin.
 
+This is a Java Jenkins plugin which publishes pretty html reports showing the results of cucumber-jvm runs. It also works for the ruby versions of cucumber - not just the cucumber-jvm. To use with regular cucumber just make sure to run cucumber like this: cucumber --format json -o cucumber.json
 
 ## Background
 
@@ -44,30 +45,37 @@ If you need more control over the plugin you can click the Advanced button for m
 3. Tick if you want Skipped steps to cause the build to fail - see further down for more info on this
 4. Tick if you want Not Implemented/Pending steps to cause the build to fail - see further down for more info on this
 
-When a build runs that publishes cucumber-jvm results it will put a link in the sidepanel to the cucumber reports. There is a feature overview page:
+When a build runs that publishes cucumber-jvm results it will put a link in the sidepanel to the cucumber reports. There is a project overview page:
+Each json file found in the json reports folder will generate a new project.
+
+![project overview page]
+(https://github.com/dpayne/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/project-overview.png)
+
+
+The feature overview page gives a high level overview of a project.
 
 ![feature overview page]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-overview.png)
+(https://github.com/dpayne/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-overview.png)
 
 And there are also feature specific results pages:
 
 ![feature specific page passing]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-passed.png)
+(https://github.com/dpayne/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-passed.png)
 
 And useful information for failures:
 
 ![feature specific page passing]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-failed.png)
+(https://github.com/dpayne/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-failed.png)
 
-If you have tags in your cucumber features you can see a tag overview:
+If you have tags in your cucumber features you can see a tag overview, this overview only includes tags in the given project:
 
 ![Tag overview]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/tag-overview.png)
+(https://github.com/dpayne/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/tag-overview.png)
 
 And you can drill down into tag specific reports:
 
 ![Tag report]
-(https://github.com/masterthought/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/tag-report.png)
+(https://github.com/dpayne/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/tag-report.png)
 
 ## Advanced Configuration Options
 
@@ -108,6 +116,14 @@ Make sure you have configured cucumber-jvm to run with the JUnit runner and to g
     @Cucumber.Options(format = {"json:target/cucumber.json"})
     public class ATMTest {
     }
+
+## Differences from masterthought's plugin
+
+* Support at the project level for each json file passed to the plugin
+* Fixed bugs related to counting empty Scenario Outline as a valid scenario
+* Background is not counted as a separate scenario, although it's steps are still counted.
+* Uses google charts api instead of flash for the charts. The tag overview chart is in D3.
+* Various bug fixes
 
 ## Develop
 

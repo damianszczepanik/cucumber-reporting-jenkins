@@ -43,7 +43,6 @@ public class Step {
 
     private Util.Status getInternalStatus() {
         if(result == null){
-            System.out.println("[WARNING] Line " + line + " : " + "Step is missing Result: " + keyword +  " : " + name);
             return Util.Status.MISSING;
         } else {
         return Util.resultMap.get(result.getStatus());
@@ -101,6 +100,7 @@ public class Step {
         } else if(getStatus() == Util.Status.MISSING){
             String errorMessage = "<span class=\"missing\">Result was missing for this step</span>";
             content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + "<div class=\"step-error-message\"><pre>" + formatError(errorMessage) + "</pre></div>" + Util.closeDiv();
+            return null;
         } else {
             content = Util.result(getStatus()) + "<span class=\"step-keyword\">" + keyword + " </span><span class=\"step-name\">" + name + "</span>" + Util.closeDiv();
         }
@@ -115,4 +115,18 @@ public class Step {
         return result;
     }
 
+    public Result getResult() {
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Step{" +
+                "name='" + name + '\'' +
+                ", keyword='" + keyword + '\'' +
+                ", line='" + line + '\'' +
+                ", result=" + result +
+                ", rows=" + (rows == null ? null : Arrays.asList(rows)) +
+                '}';
+    }
 }

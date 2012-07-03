@@ -5,46 +5,146 @@ import net.masterthought.jenkins.json.Element;
 import net.masterthought.jenkins.json.Feature;
 import net.masterthought.jenkins.json.Step;
 import net.masterthought.jenkins.json.Util;
+import org.apache.commons.io.FileUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.Writer;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FeatureReportGenerator {
+    //todo: clean up this file, many methods can be removed or replaced with more efficient ones
 
-    private Map<String, List<Feature>> jsonResultFiles;
+    private static final Pattern p = Pattern.compile("\\\\u\\s*([0-9(A-F|a-f)]{4})", Pattern.MULTILINE);
     private File reportDirectory;
     private String buildNumber;
     private String buildProject;
-    private List<Util.Status> totalSteps;
     private String pluginUrlPath;
-    private List<Feature> allFeatures;
-    private List<TagObject> allTags;
+    private List<Project> allProjects;
     private static final String charEncoding = "UTF-8";
+    private int totalScenarioPassed;
+    private int totalScenarioFailed;
+    private int totalFeatures = 0;
+    private int totalSteps = 0;
+    private static PrintStream log;
 
-    public FeatureReportGenerator(List<String> jsonResultFiles, File reportDirectory, String pluginUrlPath, String buildNumber, String buildProject, boolean skippedFails, boolean undefinedFails) throws IOException {
+    public FeatureReportGenerator(List<String> jsonResultFiles, File reportDirectory, String pluginUrlPath,
+                                  String buildNumber, String buildProject, boolean skippedFails, boolean undefinedFails,
+                                  PrintStream logger) throws IOException {
         ConfigurationOptions.setSkippedFailsBuild(skippedFails);
         ConfigurationOptions.setUndefinedFailsBuild(undefinedFails);
-        this.jsonResultFiles = parseJsonResults(jsonResultFiles);
-        this.allFeatures = listAllFeatures();
-        this.totalSteps = getAllStepStatuses();
-        this.reportDirectory = reportDirectory;
+        if (logger == null) {
+            log = System.out;
+        } else {
+            FeatureReportGenerator.log = logger;
+        }
+
         this.buildNumber = buildNumber;
         this.buildProject = buildProject;
+        this.reportDirectory = reportDirectory;
         this.pluginUrlPath = getPluginUrlPath(pluginUrlPath);
-        this.allTags = findTagsInFeatures();
+
+        copyResources(reportDirectory);
+
+        parseJsonResults(jsonResultFiles);
+
+        this.allProjects = getAllProjects(jsonResultFiles);
+        getTotalScenarioStatuses();
+    }
+
+    private static void copyResources(File reportDirectory) {
+        try {
+            log.println("Copying resources from \"" + FeatureReportGenerator.class.getResource("/themes/blue").toURI() + "\"to " + reportDirectory.getAbsolutePath());
+            FileUtils.copyDirectory(new File(FeatureReportGenerator.class.getResource("/themes/blue").toURI()), reportDirectory);
+        } catch (IOException e) {
+            log.println("Exception in copyResource: ");
+            e.printStackTrace(log);
+        } catch (URISyntaxException e) {
+            log.println("Exception in copyResource: ");
+            e.printStackTrace(log);
+        }
+    }
+
+    private List<Project> getAllProjects(List<String> jsonResultFiles) throws IOException {
+        List<Project> projects = new ArrayList<Project>();
+        Project project;
+        //todo: make sure project name has not already been taken
+        for (String jsonFile : jsonResultFiles) {
+            log.println("Parsing json file: " + jsonFile + "\n");
+            String fileContent = U2U(Util.readFileAsString(jsonFile));
+            Feature[] features = new Gson().fromJson(fileContent, Feature[].class);
+            project = new Project(jsonFile, Arrays.asList(features), reportDirectory.getAbsolutePath());
+            projects.add(project);
+        }
+        return projects;
+    }
+
+    public static String U2U(String s) {
+        String res = s;
+        Matcher m = p.matcher(res);
+        while (m.find()) {
+            res = res.replaceAll("\\" + m.group(0),
+                    Character.toString((char) Integer.parseInt(m.group(1), 16)));
+        }
+        return res;
+    }
+
+
+    private void getTotalScenarioStatuses() {
+        this.totalScenarioPassed = 0;
+        this.totalScenarioFailed = 0;
+        this.totalFeatures = 0;
+        this.totalSteps = 0;
+        List<Feature> allFeatures;
+        if (allProjects == null) {
+            return;
+        }
+        for (Project project : allProjects) {
+            allFeatures = project.getFeatures();
+            for (Feature feature : allFeatures) {
+                if (Util.hasScenarios(feature)) {
+                    totalFeatures++;
+                    for (Element element : feature.getElements()) {
+                        if (Util.hasSteps(element) && !element.isOutline()) {
+                            for (Step step : element.getSteps()) {
+                                totalSteps++;
+                            }
+                            if (!element.isBackground()) {
+                                if (element.getStatus().equals(Util.Status.FAILED)) {
+                                    totalScenarioFailed++;
+                                } else if (element.getStatus().equals(Util.Status.PASSED)) {
+                                    totalScenarioPassed++;
+                                } else if (element.getStatus().equals(Util.Status.SKIPPED)) {
+                                    totalScenarioPassed++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        log.println("Total Scenarios Passed: " + totalScenarioPassed);
+        log.println("Total Scenarios Passed: " + totalScenarioFailed);
     }
 
     public boolean getBuildStatus() {
-        return !(getTotalFails() > 0);
+        return !(totalScenarioFailed > 0);
     }
 
     private Map<String, List<Feature>> parseJsonResults(List<String> jsonResultFiles) throws IOException {
@@ -58,323 +158,120 @@ public class FeatureReportGenerator {
     }
 
     public void generateReports() throws Exception {
-        generateFeatureReports();
-        generateFeatureOverview();
-        generateTagReports();
-        generateTagOverview();
+        generateProjectOverview();
+        for (Project project : allProjects) {
+            generateFeatureOverview(project);
+            generateTagOverview(project);
+            generateFeatureReports(project);
+            generateTagReports(project);
+        }
     }
 
-    public void generateFeatureOverview() throws Exception {
+    private void generateProjectOverview() throws Exception {
+        VelocityEngine ve = new VelocityEngine();
+        ve.init(getProperties());
+        Template featureOverview = ve.getTemplate("templates/projectOverview.vm");
+        VelocityContext context = new VelocityContext();
+        context.put("build_project", buildProject);
+        context.put("build_number", buildNumber);
+        context.put("projects", allProjects);
+        context.put("total_projects", allProjects.size());
+        context.put("total_features", getTotalFeatures());
+        context.put("total_scenarios", getTotalScenarios());
+        context.put("total_steps", getTotalSteps());
+        context.put("total_scenario_passes", getTotalScenarioPasses());
+        context.put("total_scenario_fails", getTotalScenarioFails());
+        context.put("time_stamp", timeStamp());
+        context.put("total_duration", getTotalDuration());
+        context.put("jenkins_base", pluginUrlPath);
+        generateReport("project-overview.html", featureOverview, context);
+    }
+
+    public void generateFeatureOverview(Project project) throws Exception {
         VelocityEngine ve = new VelocityEngine();
         ve.init(getProperties());
         Template featureOverview = ve.getTemplate("templates/featureOverview.vm");
         VelocityContext context = new VelocityContext();
         context.put("build_project", buildProject);
         context.put("build_number", buildNumber);
-        context.put("features", allFeatures);
-        context.put("total_features", getTotalFeatures());
-        context.put("total_scenarios", getTotalScenarios());
-        context.put("total_steps", getTotalSteps());
-        context.put("total_passes", getTotalPasses());
-        context.put("total_fails", getTotalFails());
-        context.put("total_skipped", getTotalSkipped());
-        context.put("total_pending", getTotalPending());
-        context.put("chart_data", XmlChartBuilder.donutChart(getTotalPasses(), getTotalFails(), getTotalSkipped(), getTotalPending()));
+        context.put("project", project);
+        context.put("features", project.getFeatures());
+        context.put("total_features", project.getNumberOfFeatures());
+        context.put("total_scenarios", project.getNumberOfScenarios());
+        context.put("total_steps", project.getNumberOfSteps());
+        context.put("total_passes", project.getNumberOfStepsPassed());
+        context.put("total_fails", project.getNumberOfStepsFailed());
+        context.put("total_skipped", project.getNumberOfStepsSkipped());
+        context.put("total_pending", project.getNumberOfStepsPending());
+        context.put("total_scenario_passes", project.getNumberOfScenariosPassed());
+        context.put("total_scenario_fails", project.getNumberOfScenariosFailed());
         context.put("time_stamp", timeStamp());
-        context.put("total_duration", getTotalDuration());
+        context.put("total_duration", project.getFormattedDuration());
         context.put("jenkins_base", pluginUrlPath);
-        generateReport("feature-overview.html", featureOverview, context);
+        generateReport(project.getProjectFeatureUri(), featureOverview, context);
     }
 
-    public void generateFeatureReports() throws Exception {
-        Iterator it = jsonResultFiles.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry) it.next();
-            List<Feature> featureList = (List<Feature>) pairs.getValue();
-
-            for (Feature feature : featureList) {
-                VelocityEngine ve = new VelocityEngine();
-                ve.init(getProperties());
-                Template featureResult = ve.getTemplate("templates/featureReport.vm");
-                VelocityContext context = new VelocityContext();
-                context.put("feature", feature);
-                context.put("report_status_colour", getReportStatusColour(feature));
-                context.put("build_project", buildProject);
-                context.put("build_number", buildNumber);
-                context.put("scenarios", feature.getElements());
-                context.put("time_stamp", timeStamp());
-                context.put("jenkins_base", pluginUrlPath);
-                generateReport(feature.getFileName(), featureResult, context);
-            }
+    public void generateFeatureReports(Project project) throws Exception {
+        for (Feature feature : project.getFeatures()) {
+            VelocityEngine ve = new VelocityEngine();
+            ve.init(getProperties());
+            Template featureResult = ve.getTemplate("templates/featureReport.vm");
+            VelocityContext context = new VelocityContext();
+            context.put("feature", feature);
+            context.put("project", project);
+            context.put("report_status_colour", getReportStatusColour(feature));
+            context.put("build_project", buildProject);
+            context.put("build_number", buildNumber);
+            context.put("scenarios", feature.getElements());
+            context.put("time_stamp", timeStamp());
+            context.put("jenkins_base", pluginUrlPath);
+            generateReport(project.getName() + "-" + feature.getFileName(), featureResult, context);
         }
     }
 
-    public void generateTagReports() throws Exception {
-        for (TagObject tagObject : allTags) {
+    public void generateTagReports(Project project) throws Exception {
+        for (TagObject tagObject : project.getTags()) {
             VelocityEngine ve = new VelocityEngine();
             ve.init(getProperties());
             Template featureResult = ve.getTemplate("templates/tagReport.vm");
             VelocityContext context = new VelocityContext();
             context.put("tag", tagObject);
+            context.put("project", project);
             context.put("time_stamp", timeStamp());
             context.put("jenkins_base", pluginUrlPath);
             context.put("build_project", buildProject);
             context.put("build_number", buildNumber);
             context.put("report_status_colour", getTagReportStatusColour(tagObject));
-            generateReport(tagObject.getTagName().replace("@", "").trim() + ".html", featureResult, context);
+            generateReport(project.getName() + "-" + tagObject.getTagName().replace("@", "").trim() + ".html", featureResult, context);
 
         }
     }
 
-    public void generateTagOverview() throws Exception {
+    public void generateTagOverview(Project project) throws Exception {
         VelocityEngine ve = new VelocityEngine();
         ve.init(getProperties());
         Template featureOverview = ve.getTemplate("templates/tagOverview.vm");
         VelocityContext context = new VelocityContext();
+        context.put("project", project);
         context.put("build_project", buildProject);
         context.put("build_number", buildNumber);
-        context.put("tags", allTags);
-        context.put("total_tags", getTotalTags());
-        context.put("total_scenarios", getTotalTagScenarios());
-        context.put("total_steps", getTotalTagSteps());
-        context.put("total_passes", getTotalTagPasses());
-        context.put("total_fails", getTotalTagFails());
-        context.put("total_skipped", getTotalTagSkipped());
-        context.put("total_pending", getTotalTagPending());
-        context.put("chart_data", XmlChartBuilder.StackedColumnChart(allTags));
-        context.put("total_duration", getTotalTagDuration());
+        context.put("tags", project.getTags());
+        context.put("total_tags", project.getTags().size());
+        context.put("total_scenarios", project.getNumberOfScenarios());
+        context.put("total_steps", project.getNumberOfSteps());
+        context.put("total_passes", project.getNumberOfStepsPassed());
+        context.put("total_fails", project.getNumberOfStepsFailed());
+        context.put("total_skipped", project.getNumberOfStepsSkipped());
+        context.put("total_pending", project.getNumberOfStepsPending());
+        context.put("total_scenario_passes", project.getNumberOfScenariosPassed());
+        context.put("total_scenario_fails", project.getNumberOfScenariosFailed());
+        context.put("total_duration", project.getFormattedDuration());
+        List<List<Object>> scenarioData = generateTagOverviewChartScenariosData(project);
+        context.put("tagScenariosData", scenarioData);
+        context.put("numberOfTags", scenarioData.size());
         context.put("time_stamp", timeStamp());
         context.put("jenkins_base", pluginUrlPath);
-        generateReport("tag-overview.html", featureOverview, context);
-    }
-
-    private List<TagObject> findTagsInFeatures() {
-        List<TagObject> tagMap = new ArrayList<TagObject>();
-        for (Feature feature : allFeatures) {
-            List<ScenarioTag> scenarioList = new ArrayList<ScenarioTag>();
-
-            if (feature.hasTags()) {
-                for (Element scenario : feature.getElements()) {
-                    scenarioList.add(new ScenarioTag(scenario, feature.getFileName()));
-                    tagMap = createOrAppendToTagMap(tagMap, feature.getTagList(), scenarioList);
-                }
-            }
-
-            if (Util.hasScenarios(feature)) {
-                for (Element scenario : feature.getElements()) {
-                    if (scenario.hasTags()) {
-                        scenarioList = addScenarioUnlessExists(scenarioList, new ScenarioTag(scenario, feature.getFileName()));
-                    }
-                    tagMap = createOrAppendToTagMap(tagMap, scenario.getTagList(), scenarioList);
-                }
-            }
-        }
-        return tagMap;
-    }
-
-    private List<ScenarioTag> addScenarioUnlessExists(List<ScenarioTag> scenarioList, ScenarioTag scenarioTag) {
-        boolean exists = false;
-        for (ScenarioTag scenario : scenarioList) {
-            if (scenario.getParentFeatureUri().equalsIgnoreCase(scenarioTag.getParentFeatureUri())
-                    && scenario.getScenario().getName().equalsIgnoreCase(scenarioTag.getScenario().getName())) {
-                exists = true;
-                break;
-            }
-        }
-
-        if (!exists) {
-            scenarioList.add(scenarioTag);
-        }
-        return scenarioList;
-    }
-
-    private List<TagObject> createOrAppendToTagMap(List<TagObject> tagMap, List<String> tagList, List<ScenarioTag> scenarioList) {
-        for (String tag : tagList) {
-            boolean exists = false;
-            TagObject tagObj = null;
-            for (TagObject tagObject : tagMap) {
-                if (tagObject.getTagName().equalsIgnoreCase(tag)) {
-                    exists = true;
-                    tagObj = tagObject;
-                    break;
-                }
-            }
-            if (exists) {
-                List<ScenarioTag> existingTagList = tagObj.getScenarios();
-                for (ScenarioTag scenarioTag : scenarioList) {
-                    existingTagList = addScenarioUnlessExists(existingTagList, scenarioTag);
-                }
-                tagMap.remove(tagObj);
-                tagObj.setScenarios(existingTagList);
-                tagMap.add(tagObj);
-            } else {
-                tagObj = new TagObject(tag, scenarioList);
-                tagMap.add(tagObj);
-            }
-        }
-        return tagMap;
-    }
-
-    private List<Feature> listAllFeatures() {
-        List<Feature> allFeatures = new ArrayList<Feature>();
-        Iterator it = jsonResultFiles.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pairs = (Map.Entry) it.next();
-            List<Feature> featureList = (List<Feature>) pairs.getValue();
-            allFeatures.addAll(featureList);
-        }
-        return allFeatures;
-    }
-
-    private static final Pattern p = Pattern.compile("\\\\u\\s*([0-9(A-F|a-f)]{4})", Pattern.MULTILINE);
-
-    public static String U2U(String s) {
-        String res = s;
-        Matcher m = p.matcher(res);
-        while (m.find()) {
-            res = res.replaceAll("\\" + m.group(0),
-                    Character.toString((char) Integer.parseInt(m.group(1), 16)));
-        }
-        return res;
-    }
-
-    private String getPluginUrlPath(String path) {
-        return path.isEmpty() ? "/" : path;
-    }
-
-    private int getTotalSteps() {
-        return totalSteps.size();
-    }
-
-    private int getTotalTagSteps() {
-        int steps = 0;
-        for (TagObject tag : allTags) {
-            for (ScenarioTag scenarioTag : tag.getScenarios()) {
-                Step[] stepList = scenarioTag.getScenario().getSteps();
-                if (stepList != null && stepList.length != 0) {
-                    steps += stepList.length;
-                }
-            }
-        }
-        return steps;
-    }
-
-    private String getTotalDuration() {
-        Long duration = 0L;
-        for (Feature feature : allFeatures) {
-            if (Util.hasScenarios(feature)) {
-                for (Element scenario : feature.getElements()) {
-                    if (Util.hasSteps(scenario)) {
-                        for (Step step : scenario.getSteps()) {
-                            duration = duration + step.getDuration();
-                        }
-                    }
-                }
-            }
-        }
-        return Util.formatDuration(duration);
-    }
-
-    private String getTotalTagDuration() {
-        Long duration = 0L;
-        for (TagObject tagObject : allTags) {
-            for (ScenarioTag scenario : tagObject.getScenarios()) {
-                if (Util.hasSteps(scenario)) {
-                    for (Step step : scenario.getScenario().getSteps()) {
-                        duration = duration + step.getDuration();
-                    }
-                }
-            }
-        }
-        return Util.formatDuration(duration);
-    }
-
-    private int getTotalPasses() {
-        return Util.findStatusCount(totalSteps, Util.Status.PASSED);
-    }
-
-    private int getTotalFails() {
-        return Util.findStatusCount(totalSteps, Util.Status.FAILED);
-    }
-
-    private int getTotalSkipped() {
-        return Util.findStatusCount(totalSteps, Util.Status.SKIPPED);
-    }
-
-    private int getTotalPending() {
-        return Util.findStatusCount(totalSteps, Util.Status.UNDEFINED);
-    }
-
-    private int getTotalTagPasses() {
-        int passes = 0;
-        for (TagObject tag : allTags) {
-            passes += tag.getNumberOfPasses();
-        }
-        return passes;
-    }
-
-    private int getTotalTagFails() {
-        int failed = 0;
-        for (TagObject tag : allTags) {
-            failed += tag.getNumberOfFailures();
-        }
-        return failed;
-    }
-
-    private int getTotalTagSkipped() {
-        int skipped = 0;
-        for (TagObject tag : allTags) {
-            skipped += tag.getNumberOfSkipped();
-        }
-        return skipped;
-    }
-
-    private int getTotalTagPending() {
-        int pending = 0;
-        for (TagObject tag : allTags) {
-            pending += tag.getNumberOfPending();
-        }
-        return pending;
-    }
-
-    private List<Util.Status> getAllStepStatuses() {
-        List<Util.Status> steps = new ArrayList<Util.Status>();
-        for (Feature feature : allFeatures) {
-            if (Util.hasScenarios(feature)) {
-                for (Element scenario : feature.getElements()) {
-                    if (Util.hasSteps(scenario)) {
-                        for (Step step : scenario.getSteps()) {
-                            steps.add(step.getStatus());
-                        }
-                    }
-                }
-            }
-        }
-        return steps;
-    }
-
-    private int getTotalFeatures() {
-        return allFeatures.size();
-    }
-
-    private int getTotalTags() {
-        return allTags.size();
-    }
-
-    private int getTotalScenarios() {
-        int scenarios = 0;
-        for (Feature feature : allFeatures) {
-            scenarios = scenarios + feature.getNumberOfScenarios();
-        }
-        return scenarios;
-    }
-
-    private int getTotalTagScenarios() {
-        int scenarios = 0;
-        for (TagObject tag : allTags) {
-            scenarios = scenarios + tag.getScenarios().size();
-        }
-        return scenarios;
+        generateReport(project.getProjectTagUri(), featureOverview, context);
     }
 
     private void generateReport(String fileName, Template featureResult, VelocityContext context) throws Exception {
@@ -384,11 +281,36 @@ public class FeatureReportGenerator {
         writer.close();
     }
 
-    private Properties getProperties() {
-        Properties props = new Properties();
-        props.setProperty("resource.loader", "class");
-        props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        return props;
+
+    private List<List<Object>> generateTagOverviewChartScenariosData(Project project) {
+        List<List<Object>> tagOverviewData = new ArrayList<List<Object>>();
+        List<Object> row;
+        int i = 0;
+        for (TagObject tagObject : project.getTags()) {
+            row = new ArrayList<Object>(4);
+            row.add(i);
+            row.add(tagObject.getTagName());
+            row.add(tagObject.getNumberOfScenariosPassed());
+            row.add(tagObject.getNumberOfScenariosFailed());
+            tagOverviewData.add(row);
+            i++;
+        }
+        return tagOverviewData;
+    }
+
+    private List<List<String>> generateTagOverviewChartStepsData(Project project) {
+        List<List<String>> tagOverviewData = new ArrayList<List<String>>();
+        List<String> row;
+        for (TagObject tagObject : project.getTags()) {
+            row = new ArrayList<String>(5);
+            row.add(tagObject.getTagName());
+            row.add(Integer.toString(tagObject.getNumberOfStepsPassed()));
+            row.add(Integer.toString(tagObject.getNumberOfStepsFailed()));
+            row.add(Integer.toString(tagObject.getNumberOfStepsSkipped()));
+            row.add(Integer.toString(tagObject.getNumberOfStepsPending()));
+            tagOverviewData.add(row);
+        }
+        return tagOverviewData;
     }
 
     private String getReportStatusColour(Feature feature) {
@@ -397,6 +319,67 @@ public class FeatureReportGenerator {
 
     private String getTagReportStatusColour(TagObject tag) {
         return tag.getStatus() == Util.Status.PASSED ? "#C5D88A" : "#D88A8A";
+    }
+
+    private int getTotalScenarioFails() {
+        return totalScenarioFailed;
+    }
+
+    private int getTotalScenarioPasses() {
+        return totalScenarioPassed;
+    }
+
+    private int getTotalSteps() {
+        return totalSteps;
+    }
+
+    private String getTotalDuration() {
+        Long duration = 0L;
+
+        List<Feature> allFeatures;
+        for (Project project : allProjects) {
+            allFeatures = project.getFeatures();
+            for (Feature feature : allFeatures) {
+                if (Util.hasScenarios(feature)) {
+                    for (Element scenario : feature.getElements()) {
+                        if (Util.hasSteps(scenario)) {
+                            for (Step step : scenario.getSteps()) {
+                                duration = duration + step.getDuration();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return Util.formatDuration(duration);
+    }
+
+    private int getTotalFeatures() {
+        return totalFeatures;
+    }
+
+    private int getTotalScenarios() {
+        int scenarios = 0;
+        List<Feature> allFeatures;
+        for (Project project : allProjects) {
+            allFeatures = project.getFeatures();
+            for (Feature feature : allFeatures) {
+                scenarios = scenarios + feature.getNumberOfScenarios();
+            }
+        }
+        return scenarios;
+    }
+
+    private String getPluginUrlPath(String path) {
+        return path.isEmpty() ? "/" : path;
+    }
+
+    private Properties getProperties() {
+        Properties props = new Properties();
+        props.setProperty("resource.loader", "class");
+        props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        props.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
+        return props;
     }
 
     private String timeStamp() {
