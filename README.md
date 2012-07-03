@@ -49,7 +49,7 @@ When a build runs that publishes cucumber-jvm results it will put a link in the 
 Each json file found in the json reports folder will generate a new project.
 
 ![project overview page]
-(https://github.com/dpayne/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/feature-overview.png)
+(https://github.com/dpayne/jenkins-cucumber-jvm-reports-plugin-java/raw/master/.README/project-overview.png)
 
 
 The feature overview page gives a high level overview of a project.
