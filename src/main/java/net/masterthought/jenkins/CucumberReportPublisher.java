@@ -30,6 +30,8 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
+import static net.masterthought.cucumber.ReportBuilder.newReportBuilder;
+
 public class CucumberReportPublisher extends Recorder {
 
     private final static String DEFAULT_FILE_INCLUDE_PATTERN = "**/*.json";
@@ -45,9 +47,10 @@ public class CucumberReportPublisher extends Recorder {
     public final boolean noFlashCharts;
     public final boolean ignoreFailedTests;
     public final boolean parallelTesting;
+    public final boolean disableTagReporting;
 
     @DataBoundConstructor
-    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, String fileIncludePattern, String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails, boolean missingFails, boolean noFlashCharts, boolean ignoreFailedTests, boolean parallelTesting) {
+    public CucumberReportPublisher(String jsonReportDirectory, String pluginUrlPath, String fileIncludePattern, String fileExcludePattern, boolean skippedFails, boolean pendingFails, boolean undefinedFails, boolean missingFails, boolean noFlashCharts, boolean ignoreFailedTests, boolean parallelTesting, boolean disableTagReporting) {
         this.jsonReportDirectory = jsonReportDirectory;
         this.pluginUrlPath = pluginUrlPath;
         this.fileIncludePattern = fileIncludePattern;
@@ -61,6 +64,7 @@ public class CucumberReportPublisher extends Recorder {
         this.noFlashCharts = noFlashCharts;
         this.ignoreFailedTests = ignoreFailedTests;
         this.parallelTesting = parallelTesting;
+        this.disableTagReporting = disableTagReporting;
     }
 
     private String[] findJsonFiles(File targetDirectory, String fileIncludePattern, String fileExcludePattern) {
@@ -121,23 +125,23 @@ public class CucumberReportPublisher extends Recorder {
             listener.getLogger().println("[CucumberReportPublisher] Generating HTML reports");
 
             try {
-                ReportBuilder reportBuilder = new ReportBuilder(
-                        fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory),
-                        targetBuildDirectory,
-                        pluginUrlPath,
-                        buildNumber,
-                        buildProject,
-                        skippedFails,
-                        pendingFails,
-                        undefinedFails,
-                        missingFails,
-                        !noFlashCharts,
-                        true,
-                        false,
-                        "",
-                        false,
-                        parallelTesting);
-                reportBuilder.generateReports();
+                ReportBuilder reportBuilder = newReportBuilder()
+                        .withJsonReports(fullPathToJsonFiles(jsonReportFiles, targetBuildDirectory))
+                        .withReportOutputDirectory(targetBuildDirectory)
+                        .withPluginUrlPath(pluginUrlPath)
+                        .withBuildNumber(buildNumber)
+                        .withBuildProject(buildProject)
+                        .withSkippedFails(skippedFails)
+                        .withPendingFails(pendingFails)
+                        .withUndefinedFails(undefinedFails)
+                        .withMissingFails(missingFails)
+                        .withFlashCharts(!noFlashCharts)
+                        .withJenkins(true)
+                        .withArtifactsEnabled(false)
+                        .withArtifactConfig("")
+                        .withFlashCharts(false)
+                        .withParallelTesting(parallelTesting)
+                        .withTagsReporting(true).build();
 
                 boolean buildSuccess = reportBuilder.getBuildStatus();
 
