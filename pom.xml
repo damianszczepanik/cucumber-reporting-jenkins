@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
@@ -9,7 +10,7 @@
 
     <groupId>net.masterthought.jenkins</groupId>
     <artifactId>cucumber-reports</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
     <scm>
@@ -17,7 +18,7 @@
         <developerConnection>scm:git:git@github.com:damianszczepanik/cucumber-reporting-jenkins.git
         </developerConnection>
         <url>git@github.com:damianszczepanik/cucumber-reporting-jenkins.git</url>
-        <tag>cucumber-reports-0.2.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <description>
@@ -64,15 +65,10 @@
 
     <build>
         <plugins>
-        <!--  release with
-        mvn clean release:prepare release:perform -Dusername=... -Dpassword=...
-         -->
             <plugin>
                 <groupId>org.eclipse.hudson.tools</groupId>
                 <artifactId>maven-hpi-plugin</artifactId>
-                <!-- explicitly specifying the latest version here because one we get from
-                     the parent POM tends to lag behind a bit -->
-                <version>1.106</version>
+                <version>3.0.3</version>
             </plugin>
         </plugins>
         <pluginManagement>
@@ -80,7 +76,8 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.2</version>
+                    <!-- work around MRELEASE-875 -->
+                    <version>3.0-r1585899</version>
                 </plugin>
             </plugins>
         </pluginManagement>
